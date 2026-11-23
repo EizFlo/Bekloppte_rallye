@@ -25,6 +25,8 @@
   --pop:0 4px 0 var(--ink)}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--paper);color:var(--ink);}
+/* Version 140 (Flo): auf dem Handy lädt Runterwischen die Seite nicht mehr neu (kein Pull-to-refresh, kein Gummiband-Effekt) */
+html,body{overscroll-behavior:none;overscroll-behavior-y:none}
 body{background:linear-gradient(var(--sky) 0,#e3f0ec 140px,var(--paper) 320px) no-repeat,var(--paper);min-height:100vh;font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
 #app{max-width:760px;margin:0 auto;padding:10px 12px 40px}
 header{text-align:center;padding:2px 0 0}
@@ -664,6 +666,8 @@ const BONUS = [400,250,150,100];
 let STAGE_R0=0;
 const stagePrize=()=>BONUS[0]+100*Math.max(0,STAGE-1)+10*Math.max(0,ROUND-STAGE_R0);   // dazu +10 € pro Runde der laufenden Etappe
 function goalBar(){ if(GOAL<0) return; $('#goal').textContent=(STAGES>1?`Etappe ${STAGE}/${STAGES} · `:'')+`🎯 Ziel: ${CITIES[GOAL].n} · 🏆 ${stagePrize()} €`; }
+// Version 140 (Flo): Runterwischen auf dem Handy lädt die Seite nicht mehr neu; während eines Spiels fragt der Browser vor dem Neuladen/Schließen nach.
+// Version 141 (Flo): online schließen „Weiter“-Fenster bei Computergegnern (Mieteinnahmen, Zwischenstand) für alle gleichzeitig (Gerät des ersten Menschen bestimmt), Hebel/„Los geht's“ beim Computer online gesperrt; nachts leuchtet der blaue (und gelbe) Weg. Handy: schwarzer Kartenboden (Android wirft Leinwand-Speicher weg) wird erkannt und neu gemalt (bgHeal).
 // Version 138 (Flo): Online spielt man den Fahrer, der vorher auf „Mensch“ steht; Freunde bekommen möglichst ihren eigenen Platz (Farbe).
 // Version 137 (Flo): 🌐 Onlinemodus auch ohne Claude – auf einer eigenen Webseite verbinden sich die Geräte direkt (PeerJS/WebRTC).
 // Version 136 (Flo): 🌐 Onlinemodus – Raum mit Code, jeder spielt auf seinem Gerät. Alle Geräte rechnen mit demselben Zufalls-Startwert,
@@ -1108,7 +1112,7 @@ $('#start').onclick=()=>{
 };
 $('#restart').onclick=()=>{
   gameId++; choice=null; $('#lookback').hidden=true; NET.on=false; NET.wait=null; netBar(); netLobby();
-  $('#game').hidden=true; $('#setup').hidden=false; $('#popup').hidden=true; screenReset();
+  GAME_LIVE=false; $('#game').hidden=true; $('#setup').hidden=false; $('#popup').hidden=true; screenReset();
 };
 
 document.addEventListener('keydown',e=>{
@@ -1948,7 +1952,7 @@ function buildDecor(){
     for(let n=0;n<8;n++){ const a=i+NBI[n], b=j+NBJ[n]; if(a<0||b<0||a>=fw||b>=fh) continue; const q=b*fw+a, nd=dk+NBW[n];
       if(!kd[q]&&dist[q]>nd+.01){ if(dist[q]===1e9) qu[qt++]=q; dist[q]=nd; src[q]=src[k]; } } }
   const mkc=()=>{ const c=document.createElement('canvas'); c.width=fw; c.height=fh; return c; };
-  const LC=mkc(), SC=mkc(), lg=LC.getContext('2d'), sg=SC.getContext('2d'), LI=lg.createImageData(fw,fh), SI=sg.createImageData(fw,fh);
+  const LC=mkc(), SC=mkc(), lg=LC.getContext('2d',{willReadFrequently:true}), sg=SC.getContext('2d',{willReadFrequently:true}), LI=lg.createImageData(fw,fh), SI=sg.createImageData(fw,fh);
   const sea0=hx('#74cfe9'), sea1=hx('#3e9ddf'), sea2=hx('#2c7fc8');
   const LD=LI.data, SD=SI.data;
   for(let k=0;k<FN;k++) if(kd[k]){ const i=k%fw, j=(k-i)/fw, c=landCol((i+.5)*FS,(j+.5)*FS,kd[k]===2), o=k*4; LD[o]=c[0]; LD[o+1]=c[1]; LD[o+2]=c[2]; LD[o+3]=255; }
@@ -1959,7 +1963,7 @@ function buildDecor(){
   lg.putImageData(LI,0,0); sg.putImageData(SI,0,0);
   return {LC,SC,FS}; };
   // Papier-Körnung: weiche helle und dunkle Wolken, nahtlos wiederholt
-  const PC=document.createElement('canvas'); PC.width=PC.height=256; { const g=PC.getContext('2d'), Rp=seeded(77);
+  const PC=document.createElement('canvas'); PC.width=PC.height=256; { const g=PC.getContext('2d',{willReadFrequently:true}), Rp=seeded(77);
     for(let i=0;i<220;i++){ const x=Rp()*256, y=Rp()*256, r=10+Rp()*46, dk=Rp()<.55;
       for(const ox of [-256,0,256]) for(const oy of [-256,0,256]){ if(x+ox+r<0||x+ox-r>256||y+oy+r<0||y+oy-r>256) continue;
         const gr=g.createRadialGradient(x+ox,y+oy,0,x+ox,y+oy,r); gr.addColorStop(0,dk?'rgba(120,90,40,.035)':'rgba(255,252,235,.05)'); gr.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=gr; g.fillRect(x+ox-r,y+oy-r,2*r,2*r); } } }
@@ -1977,7 +1981,24 @@ function buildDecor(){
 // ---- Bildkarten-Stil (Version 114): Muster für Land/Meer/Papier, Flüsse, Namen, Titelband, Kompass, Rahmen ----
 function bgPats(){ const D=DECOR; if(D.pat) return D.pat; const g=document.createElement('canvas').getContext('2d');
   const mk=(c,s)=>{ const p=g.createPattern(c,'repeat'); p.setTransform(new DOMMatrix([s,0,0,s,0,0])); return p; };
-  const F=D.fields(); return D.pat={land:mk(F.LC,F.FS), sea:mk(F.SC,F.FS), paper:mk(D.PC,3.2)}; }
+  const F=D.fields(); return D.pat={land:mk(F.LC,F.FS), sea:mk(F.SC,F.FS), paper:mk(D.PC,3.2), src:[F.LC,F.SC]}; }
+// Version 141 (Flo, Handyfotos): auf dem Handy war der Boden plötzlich schwarz (nur Bäume und Waldflächen zu sehen).
+// Ursache: Android wirft unter Speicherdruck Leinwand-Inhalte weg – dann malen die Land-/Meer-Muster nichts mehr und die
+// Kacheln (ohne Durchsicht) bleiben schwarz. Die Muster-Leinwände liegen jetzt im normalen Speicher (willReadFrequently),
+// und bgHeal() prüft regelmäßig, ob Muster oder Kacheln leer geworden sind; dann wird alles neu gemalt.
+function bgEmpty(c){ try{ if(!c||!c.width) return false; const g=c.getContext('2d'); if(g.isContextLost&&g.isContextLost()) return true;
+  return g.getImageData(c.width>>1,c.height>>1,1,1).data[3]===0; }catch(e){ return false; } }
+function bgHeal(tiles){
+  const D=DECOR; if(!D||!D.pat) return;
+  let bad=bgEmpty(D.pat.src&&D.pat.src[0])||bgEmpty(D.pat.src&&D.pat.src[1]);
+  if(!bad&&tiles){ for(const t of BG.tiles.values()) if(bgEmpty(t.c)){ bad=true; break; } if(!bad&&BG.over&&bgEmpty(BG.over.c)) bad=true; }
+  if(!bad) return;
+  console.warn('Rallye: Kartenboden war leer – wird neu gemalt');
+  D.pat=null; BG.P.clear(); for(const t of BG.tiles.values()) t.c.width=t.c.height=0; BG.tiles.clear(); BG.job=null; BG.queue=[]; BG.over=null; BG.pend=false;
+  try{ bgDraw(); }catch(e){ console.warn(e); }
+}
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(()=>bgHeal(true),300); });
+setInterval(()=>{ if(!document.hidden) bgHeal(false); },4000);
 function bgRivers(ctx,hit){ const R=DECOR.RIVERS;
   ctx.strokeStyle=MAPC.ink; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w+3.6; ctx.stroke(bgPath('rv'+i,r.d)); } });
   ctx.strokeStyle='#4ea8e4'; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w; ctx.stroke(bgPath('rv'+i,r.d)); } });
@@ -2258,6 +2279,14 @@ function nSprite(k){ if(NSPR[k]) return NSPR[k]; const c=document.createElement(
 function nightGlows(){ if(NGL) return NGL; NGL=[];
   CITIES.forEach((c,i)=>{ const big=BIG.has(c.n), r=c.wp?24:(big?92:68); NGL.push({x:c.x,y:c.y-4,r,town:!c.wp,b:[c.x-r,c.y-r,c.x+r,c.y+r]}); });
   return NGL; }
+// Straßenstücke des blauen/gelben Wegs im Bildausschnitt (für das Leuchten in der Nacht)
+function nightRoutes(vx,vy,x1,y1){ const out=[];
+  for(const [M,y] of [[ROUTE,false],[YROUTE,true]]){ const p=[];
+    for(const k of M.keys()){ const i=EIDX.get(k); if(i===undefined) continue; const pts=GEO.edges[i][3]; let a=1e9,b=1e9,c=-1e9,d=-1e9;
+      for(let j=0;j<pts.length;j+=2){ const X=pts[j],Y=pts[j+1]; if(X<a)a=X; if(X>c)c=X; if(Y<b)b=Y; if(Y>d)d=Y; }
+      if(a<x1+40&&c>vx-40&&b<y1+40&&d>vy-40) p.push(pts); }
+    if(p.length) out.push({y,p}); }
+  return out; }
 function nightDraw(g,vx,vy,x1,y1,W,H){
   const t=g.getTransform(); g.setTransform(1,0,0,1,0,0); g.globalAlpha=NIGHTA; g.fillStyle='rgba(3,7,26,.82)'; g.fillRect(0,0,W,H); g.setTransform(t);   // Version 130: dunkler (vorher .66)
   const L=nightGlows(), cut=nSprite('cut'), town=nSprite('town'), vis=[];
@@ -2274,7 +2303,18 @@ function nightDraw(g,vx,vy,x1,y1,W,H){
     const lg=g.createLinearGradient(18,0,175,0); lg.addColorStop(0,'rgba(0,0,0,.95)'); lg.addColorStop(.55,'rgba(0,0,0,.55)'); lg.addColorStop(1,'rgba(0,0,0,0)');
     g.fillStyle=lg; g.beginPath(); g.moveTo(16,-11); g.lineTo(165,-62); g.quadraticCurveTo(190,0,165,62); g.lineTo(16,11); g.closePath(); g.fill();
     g.restore(); g.drawImage(cut,p.nx-46,p.ny-34,92,68); }
+  // Version 141 (Flo): der blaue Weg (und der gelbe Anhalter-Weg) leuchtet nachts – erst aus der Dunkelheit schneiden, dann hell nachziehen
+  const rw=nightRoutes(vx,vy,x1,y1);
+  const rpath=r=>{ g.beginPath(); for(const pts of r.p){ g.moveTo(pts[0],pts[1]); for(let i=2;i<pts.length;i+=2) g.lineTo(pts[i],pts[i+1]); } };
+  if(rw.length){ g.lineCap='round'; g.lineJoin='round';
+    for(const r of rw){ rpath(r); g.lineWidth=50; g.strokeStyle='rgba(0,0,0,.5)'; g.stroke(); g.lineWidth=30; g.strokeStyle='rgba(0,0,0,.95)'; g.stroke(); } }
   g.globalCompositeOperation='source-over';
+  if(rw.length){ g.globalCompositeOperation='lighter';
+    for(const r of rw){ const y=r.y; rpath(r);
+      g.lineWidth=40; g.strokeStyle=y?'rgba(255,190,0,.20)':'rgba(40,140,255,.30)'; g.stroke();
+      g.lineWidth=18; g.strokeStyle=y?'rgba(255,210,40,.28)':'rgba(70,170,255,.40)'; g.stroke();
+      g.lineWidth=5; g.strokeStyle=y?'rgba(255,240,150,.8)':'rgba(170,225,255,.9)'; g.stroke(); }
+    g.globalCompositeOperation='source-over'; }
   for(const o of vis) if(o.town) g.drawImage(town,o.x-o.r*.8,o.y-o.r*.56,o.r*1.6,o.r*1.12);
   for(const p of cars){ const a=p.hd||0, cs=Math.cos(a), sn=Math.sin(a);
     g.save(); g.transform(cs,sn*ISO_S,-sn,cs*ISO_S,p.nx,p.ny);
@@ -2516,6 +2556,7 @@ function updateRoute(){
   for(const [k,els] of YROUTE) if(!wy.has(k)){ els.forEach(e=>e.remove()); YROUTE.delete(k); }
   const YA=$('#ryA'), YC=$('#ryC');
   for(const [k,[u,v]] of wy) if(!YROUTE.has(k)){ const d=edgePath(u,v), els=[YA,YC].map(par=>{ const e=document.createElementNS(NS,'path'); e.setAttribute('d',d); par.appendChild(e); return e; }); YROUTE.set(k,els); }
+  if(NIGHTA>0) nightReq();   // Version 141: der leuchtende Weg in der Nacht folgt der Route
 }
 let YROUTE=new Map(); const HDC=new Map();
 function hikerDist(dest){ let d=HDC.get(dest); if(!d){ d=bfs(dest); HDC.set(dest,d); } return d; }
@@ -2685,6 +2726,8 @@ function netArm(p,local){
   if(t&&!t.mine){ const a=$('#arm'); if(a) a.disabled=true; const h=$('#slothint'); if(h) h.innerHTML=`⏳ ${esc(p.name)} zieht am Hebel …`; }
   return netDo(t,local);
 }
+// Version 141: erster Mensch in der Fahrerliste (auf allen Geräten gleich) – sein Gerät schließt Fenster der Computergegner für alle
+function netLead(){ return players.find(p=>!p.cpu&&p.cid)||null; }
 function netToCpu(p){ if(!p||p.cpu) return; p.cpu=true; render(); say(`🤖 Der Computer fährt jetzt für ${p.name}.`); }
 const netWaitHTML=p=>`<div class="netw">⏳ ${VEH[p.veh]} ${esc(p.name)} entscheidet gerade …</div>`;
 // Prüfsumme nach jedem Zug: weicht ein Gerät ab, zeigt die Leiste eine Warnung
@@ -2830,10 +2873,13 @@ let askSeq=0;   // jedes Fenster bekommt eine Nummer, damit ein alter Timer kein
 function ask(msg, labels, o={}){
   const g=gameId, pop=!!o.popup, my=++askSeq, who=o.who||cur();
   // 🌐 Onlinespiel: Entscheidet ein Mitspieler auf seinem Gerät (far), sieht man hier die Knöpfe nur ausgegraut und wartet auf seine Wahl
-  const nt=(!o.local&&labels.length)?netTake(who):null, far=!!(nt&&!nt.mine);
+  // Version 141 (Flo): Ist ein Computergegner dran (z. B. Mieteinnahmen/Zwischenstand am Rundenende) und das Fenster hat nur „Weiter“,
+  // bestimmt online das Gerät des ersten Menschen: drückt er „Weiter“ (oder läuft die Zeit ab), schließt es bei allen.
+  const dec=(NET.on&&!o.local&&who&&who.cpu&&o.auto&&labels.length===1)?netLead():who;
+  const nt=(!o.local&&labels.length)?netTake(dec):null, far=!!(nt&&!nt.mine);
   const lock=far||(NET.on&&who&&who.cpu&&!(o.auto&&labels.length===1));   // online darf niemand für den Computer tippen
   const msgEl=pop?$('#pmsg'):$('#msg'), box=pop?$('#pbtns'):$('#btns'), wrap=$('#popup'); if(pop) $('#pscroll').scrollTop=0;
-  msgEl.innerHTML=msg+(far?netWaitHTML(who):''); box.innerHTML=''; box.dataset.cpu=(!o.auto&&(who||{}).cpu)||lock?'1':''; wrap.classList.remove('slotpop','wide'); wrap.hidden=!pop; box.classList.toggle('col',labels.length>2&&!o.grid); box.classList.toggle('grid',!!o.grid); box.classList.toggle('menu',!!o.menu); if(o.menu) box.classList.remove('col');
+  msgEl.innerHTML=msg+(far&&dec===who?netWaitHTML(who):''); box.innerHTML=''; box.dataset.cpu=(!o.auto&&(who||{}).cpu)||lock?'1':''; wrap.classList.remove('slotpop','wide'); wrap.hidden=!pop; box.classList.toggle('col',labels.length>2&&!o.grid); box.classList.toggle('grid',!!o.grid); box.classList.toggle('menu',!!o.menu); if(o.menu) box.classList.remove('col');
   return new Promise(res=>{
     let done=false;
     const close=()=>{ box.innerHTML=''; if(pop&&!o.keep) wrap.hidden=true; };
@@ -2849,7 +2895,7 @@ function ask(msg, labels, o={}){
     if(nt){
       if(far){ NET.wait=nt; netBar(); }
       netWait(nt.s).then(v=>{ if(done||g!==gameId) return;
-        if(v===NET_CPU){ netToCpu(who); setTimeout(()=>{ if(g===gameId) fin(o.cpu||0,true); },600*SPEED); }
+        if(v===NET_CPU){ netToCpu(dec); setTimeout(()=>{ if(g===gameId) fin(o.cpu||0,true); },600*SPEED); }
         else if(far) fin(v,true); });
     }
     if(o.auto){
@@ -3884,6 +3930,7 @@ async function rollPopup(p){
   $('#pmsg').innerHTML=`${VEH[p.veh]} <b>${esc(p.name)}</b>, du bist dran!${hint}${n>1?`<br>🎰 Diesmal drehen <b>${n} Walzen</b>, die Ergebnisse werden addiert.`:''}${machineHTML(n)}`;
   askSeq++; const pb=$('#pbtns'); pb.innerHTML=''; pb.classList.remove('col','grid','menu'); $('#popup').classList.remove('wide'); $('#popup').classList.add('slotpop'); $('#popup').hidden=false; fitMachine();
   const g=gameId;
+  if(NET.on&&p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
   await netArm(p,()=>new Promise(res=>{ $('#arm').onclick=()=>res(0); if(p.cpu) setTimeout(()=>{ if(g===gameId) res(0); },800*SPEED); }));
   if(g!==gameId) throw 'abort';
   $('#arm').disabled=true; $('#slothint').textContent=''; SND.play('lever');
@@ -4303,6 +4350,7 @@ async function pickGoal(ref){
     const g=gameId, go=document.createElement('button'); go.id='sgo'; go.className='big'; go.type='button'; go.textContent='Los geht\'s!';
     $('#screen .cloth').appendChild(go);
     const nt=netTake(cur()); if(nt&&!nt.mine){ go.disabled=true; go.textContent=`⏳ ${cur().name} …`; }
+    else if(NET.on&&cur()&&cur().cpu){ go.disabled=true; }   // Version 141: beim Computer startet es online auf allen Geräten von selbst
     await netDo(nt,()=>new Promise(res=>{ go.onclick=()=>{ SND.play('tap'); res(0); }; if(cur()&&cur().cpu) setTimeout(()=>res(0),1800*SPEED); }));
     go.remove(); if(g!==gameId) throw 'abort';
     await screenHide();
@@ -4332,6 +4380,7 @@ async function orderRoll(p,again){
   $('#pmsg').innerHTML=`🏁 <b>Wer fängt an?</b><br>${VEH[p.veh]} <b>${esc(p.name)}</b>, dreh am Automaten!${again?'<br><small>Gleichstand – ihr dreht nochmal.</small>':'<br><small>Die höchste Zahl fängt an.</small>'}${machineHTML(1)}`;
   askSeq++; const pb=$('#pbtns'); pb.innerHTML=''; pb.classList.remove('col','grid','menu'); $('#popup').classList.remove('wide'); $('#popup').classList.add('slotpop'); $('#popup').hidden=false; fitMachine();
   const g=gameId;
+  if(NET.on&&p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
   await netArm(p,()=>new Promise(res=>{ $('#arm').onclick=()=>res(0); if(p.cpu) setTimeout(()=>{ if(g===gameId) res(0); },800*SPEED); }));
   if(g!==gameId) throw 'abort';
   $('#arm').disabled=true; $('#slothint').textContent=''; SND.play('lever');
@@ -4482,6 +4531,7 @@ async function playGame(){
 }
 
 function results(){
+  GAME_LIVE=false;   // Version 140: Spiel vorbei, Verlassen ohne Warnung
   askSeq++;   // Version 128: alte Fenster-Timer (z. B. „Super!“ oder „Gekauft!“) dürfen das Ergebnis nicht mehr schließen
   render();
   const ranked=players.map(p=>({p,total:p.money+valueOf(p)})).sort((a,b)=>b.total-a.total);
@@ -4563,8 +4613,26 @@ function showStats(title,back){
   });
 }
 
+// Version 140 (Flo): Runterwischen am Handy lädt die Seite nicht mehr neu. Das CSS (overscroll-behavior) reicht bei Chrome/Android
+// und neuem Safari; für ältere Handys fängt dieser Teil das Wischen nach unten ab, wenn oben nichts mehr zu scrollen ist.
+// Fenster und Listen mit eigenem Scrollbalken scrollen weiter ganz normal. Dazu fragt der Browser beim Neuladen/Schließen
+// während eines laufenden Spiels nach, ob man wirklich gehen will.
+let GAME_LIVE=false;
+(function noPullRefresh(){
+  let x0=0,y0=0;
+  const canScrollUp=el=>{ for(;el&&el!==document.body&&el!==document.documentElement;el=el.parentElement){
+    if(el.scrollTop>0){ const o=getComputedStyle(el).overflowY; if(o==='auto'||o==='scroll') return true; } } return false; };
+  document.addEventListener('touchstart',e=>{ if(e.touches.length===1){ x0=e.touches[0].clientX; y0=e.touches[0].clientY; } },{passive:true});
+  document.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1||!e.cancelable) return;
+    if(e.target.closest&&e.target.closest('input,select,textarea')) return;   // Lautstärke-Regler usw. nicht stören
+    const dx=e.touches[0].clientX-x0, dy=e.touches[0].clientY-y0;
+    if(dy>0&&dy>Math.abs(dx)&&(window.scrollY||document.documentElement.scrollTop||0)<=0&&!canScrollUp(e.target)) e.preventDefault();
+  },{passive:false});
+  window.addEventListener('beforeunload',e=>{ if(!GAME_LIVE) return; e.preventDefault(); e.returnValue=''; return ''; });
+})();
 function startGame(list,opt){
-  gameId++; opt=opt||{};
+  gameId++; opt=opt||{}; GAME_LIVE=true;
   // 🌐 Version 136: im Onlinespiel kommen Startwert, Etappen und Fahrerliste vom Gastgeber
   RSEED=opt.seed!=null?opt.seed>>>0:(Math.random()*4294967296)>>>0;
   netReset(opt);
