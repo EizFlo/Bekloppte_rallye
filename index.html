@@ -493,7 +493,7 @@ const SND=(()=>{
   // Gitarrengriffe (6 Saiten, MIDI) und Grundton/Quinte für den Bass
   const CH={G:{g:[43,47,50,55,59,67],r:43,q:38},C:{g:[48,52,55,60,64],r:48,q:43},D:{g:[50,57,62,66],r:38,q:45},D7:{g:[50,57,60,66],r:38,q:45},Em:{g:[40,47,52,55,59,64],r:40,q:47},Am:{g:[45,52,57,60,64],r:45,q:40}};
   const NN={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
-  const pm=b=>{ const out=[]; b.split(' ').forEach((tk,i)=>{ if(tk==='_'){ if(out.length&&out[out.length-1].open) out[out.length-1].len++; } else if(tk==='.'){ if(out.length) out[out.length-1].open=false; } else { if(out.length) out[out.length-1].open=false; out.push({s:i,m:12*(+tk.slice(-1)+1)+NN[tk[0]]+(tk[1]==='#'?1:0),len:1,open:true}); } }); return out; };
+  const pm=b=>{ const out=[]; b.split(' ').forEach((tk,i)=>{ if(tk==='_'){ if(out.length&&out[out.length-1].open) out[out.length-1].len++; } else if(tk==='.'){ if(out.length) out[out.length-1].open=false; } else { if(out.length) out[out.length-1].open=false; out.push({s:i,m:12*(+tk.slice(-1)+1)+NN[tk[0]]+(tk[1]==='#'?1:tk[1]==='b'?-1:0),len:1,open:true}); } }); return out; };
   // Ablauf: Vorspiel, A (Fiddle), B (Banjo spielt die Melodie), A' (Fiddle + Banjo-Rolls), B' (beide), Zwischenspiel
   // v: 0 Vorspiel, 1 A, 2 B, 3 A', 4 B', 5 Zwischenspiel
   const FORM=[]; const add=(mel,ch,v)=>mel.forEach((b,i)=>FORM.push({mel:b?pm(b):[],ch:ch[i],v,i}));
@@ -631,16 +631,107 @@ const SND=(()=>{
     if(v===7&&(B.i===3||B.i===7)) { clop(off(6),true); clop(off(7),false); }
     if(v===5){ [0,1,2,3,4,5,6,7].forEach(s=>clop(off(s),s%2===0)); if(B.i===1) slideWh(off(4),true); if(B.i===3) slideWh(off(2),false); }
   }
+  // ---- ❄️ Weihnachtsmusik für den Winter (Version 163, Flo): eigene Komposition „Schlittenfahrt im Schnee“, F-Dur, 100 Schläge pro Minute ----
+  // Instrumente: Celesta (Glöckchen-Melodie), Klavier, Schlittenglocken, Holzflöte im Moll-Teil, weiche Streicherfläche, ganz leiser Kontrabass,
+  // Hufgetrappel im Vor- und Nachspiel. Läuft im Winter (und bei „Santa Claus“) statt der Country-Musik.
+  const WA=['A4 _ C5 _ F5 _ E5 F5','G5 _ F5 _ D5 _ . .','E5 _ G5 _ C6 _ Bb5 A5','A5 _ _ _ F5 _ . .','D5 _ F5 _ A5 _ G5 F5','Bb5 _ A5 _ G5 _ D5 _','C5 E5 G5 Bb5 A5 _ G5 _','F5 _ _ _ . . . .'];
+  const WAC=['F','Bb','C','F','Dm','Gm','C7','F'];
+  const WA2=['A4 C5 F5 G5 A5 _ G5 F5','G5 _ F5 D5 Bb4 _ D5 _','E5 _ G5 _ C6 D6 C6 Bb5','A5 _ _ _ C6 _ . .','D6 _ C6 _ A5 _ F5 _','G5 A5 Bb5 _ D6 _ Bb5 _','A5 _ G5 _ E5 _ C5 _','F5 _ _ _ . . . .'];
+  const WB=['D6 _ C6 Bb5 F5 _ D5 _','C6 _ A5 F5 C5 _ . .','Bb5 _ A5 G5 D5 _ G5 _','A5 G5 F5 E5 G5 _ . .','D5 F5 Bb5 _ A5 _ G5 _','F5 A5 C6 _ A5 _ F5 _','G5 _ Bb5 _ E5 _ G5 _','F5 _ _ _ C5 _ . .'];
+  const WBC=['Bb','F','Gm','C','Bb','F','C7','F'];
+  const WCm=['F5 _ E5 _ D5 _ A4 _','C5 _ E5 _ A5 _ . .','Bb5 _ A5 G5 F5 _ D5 _','E5 _ C#5 _ A4 _ . .','D5 E5 F5 G5 A5 _ D6 _','Bb5 _ A5 _ G5 _ F5 _','E5 _ G5 _ Bb5 _ C6 _','C6 _ _ _ . . . .'];
+  const WCC=['Dm','Am','Bb','A','Dm','Gm','C','C7'];
+  // Akkorde: n = Töne für Klavier/Streicher, r = Grundton, q = Quinte (Bass)
+  const WCH={F:{n:[57,60,65],r:41,q:48},Bb:{n:[58,62,65],r:46,q:41},C:{n:[55,60,64],r:48,q:43},C7:{n:[55,58,64],r:48,q:43},Dm:{n:[57,62,65],r:50,q:45},Gm:{n:[55,58,62],r:43,q:50},Am:{n:[57,60,64],r:45,q:52},A:{n:[57,61,64],r:45,q:52}};
+  // Ablauf: Vorspiel (Schlitten kommt), A (Celesta), B (Klavier), A' (beide, zweite Stimme), C (Flöte, Moll), A, B, Nachspiel
+  const WFORM=[]; const wadd=(mel,ch,v)=>mel.forEach((b,i)=>WFORM.push({mel:b?pm(b):[],ch:ch[i],v,i}));
+  wadd([0,0,0,0],['F','Bb','F','C7'],0); wadd(WA,WAC,1); wadd(WB,WBC,2); wadd(WA2,WAC,3); wadd(WCm,WCC,4); wadd(WA,WAC,5); wadd(WB,WBC,6); wadd([0,0,0,0],['F','Bb','C7','F'],7);
+  const WE8=60/100/2, WSW=WE8*.06;
+  const WSC=[5,7,9,10,0,2,4];   // F-Dur
+  const wthird=m=>{ let x=m-1, n=0; while(n<2){ if(WSC.includes(((x%12)+12)%12)) n++; if(n<2) x--; } return x; };
+  // Teilton-Puffer (wie beim Klavier): Ton schwingt mit eigenem Abklingen aus
+  function addPart(d,sr,f,amp,tau,o0){ if(f>sr/2.2) return; const w=2*Math.PI*f/sr, c=Math.cos(w); let y1=Math.sin(-w), y2=Math.sin(-2*w), k=Math.exp(-1/(sr*tau)), e=amp;
+    for(let i=o0||0;i<d.length;i++){ const y=2*c*y1-y2; y2=y1; y1=y; d[i]+=y*e; e*=k; if(e<1e-5) break; } }
+  const celCache={};
+  function celBuf(m){ if(celCache[m]) return celCache[m]; const sr=ctx.sampleRate, f=mf(m), len=Math.floor(sr*1.8), buf=ctx.createBuffer(1,len,sr), d=buf.getChannelData(0), tau=Math.max(.35,1.15-(m-72)*.03);
+    addPart(d,sr,f,.5,tau); addPart(d,sr,f*2,.1,tau*.3); addPart(d,sr,f*3,.03,tau*.15); addPart(d,sr,f*4.2,.02,.04);
+    const at=Math.floor(sr*.002); for(let i=0;i<at;i++) d[i]*=i/at; const fo=Math.floor(sr*.08); for(let i=0;i<fo;i++) d[len-1-i]*=i/fo;
+    return celCache[m]=buf; }
+  const cel=(m,t,vol)=>playBuf(celBuf(m),1,t,vol,0);
+  // Schlittenglocken: ein paar kleine Schellen, leicht versetzt geschüttelt – drei Varianten, damit es lebendig klingt
+  let jb=null;
+  function jingleBufs(){ if(jb) return jb; const sr=ctx.sampleRate; jb=[];
+    for(let v=0;v<3;v++){ const len=Math.floor(sr*.24), buf=ctx.createBuffer(1,len,sr), d=buf.getChannelData(0);
+      for(let b=0;b<6;b++){ const f=1900+Math.random()*2300, o0=Math.floor(sr*Math.random()*.02); addPart(d,sr,f,.22,.05+Math.random()*.06,o0); addPart(d,sr,f*2.32,.06,.025,o0); }
+      let p=0; for(let i=0;i<len;i++){ const r=Math.random()*2-1, e=Math.exp(-i/(sr*.018)); d[i]+=(r-p)*e*.18; p=r; }
+      let mx=0; for(let i=0;i<len;i++) mx=Math.max(mx,Math.abs(d[i])); for(let i=0;i<len;i++) d[i]/=mx||1;
+      const fo=Math.floor(sr*.03); for(let i=0;i<fo;i++) d[len-1-i]*=i/fo; jb.push(buf); }
+    return jb; }
+  const jingle=(t,v)=>playBuf(jingleBufs()[(Math.random()*3)|0],1,t,v,0);
+  // weiche Streicherfläche (Dreieck, leicht verstimmt, warm gefiltert)
+  function pad(ns,t,dur,vol){ const lp=ctx.createBiquadFilter(), g=ctx.createGain(); lp.type='lowpass'; lp.frequency.value=1300; lp.Q.value=.4;
+    g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.5); g.gain.setValueAtTime(vol,t+dur-.1); g.gain.linearRampToValueAtTime(.0001,t+dur+.6);
+    ns.forEach(m=>[-7,7].forEach(det=>{ const o=ctx.createOscillator(); o.type='triangle'; o.frequency.value=mf(m); o.detune.value=det; o.connect(lp); o.start(t); o.stop(t+dur+.7); }));
+    lp.connect(g); g.connect(musG); }
+  // Holzflöte: Sinus mit etwas Oberton, sanftes Vibrato, Hauch am Anfang
+  function flute(m,t,dur,vol){ const f=mf(m), g=ctx.createGain(), lfo=ctx.createOscillator(), lg=ctx.createGain();
+    lfo.frequency.value=4.8; lg.gain.setValueAtTime(0,t); lg.gain.linearRampToValueAtTime(f*.008,t+Math.min(.4,dur*.7)); lfo.connect(lg);
+    [[1,'sine',1],[2,'sine',.12],[3,'sine',.04]].forEach(([k,ty,a])=>{ const o=ctx.createOscillator(), og=ctx.createGain(); o.type=ty; o.frequency.value=f*k; og.gain.value=a; lg.connect(o.frequency); o.connect(og); og.connect(g); o.start(t); o.stop(t+dur+.2); });
+    g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.07); g.gain.setValueAtTime(vol*.9,t+Math.max(.08,dur-.05)); g.gain.exponentialRampToValueAtTime(.0001,t+dur+.15);
+    g.connect(musG); g.connect(delay); lfo.start(t); lfo.stop(t+dur+.2);
+    noise({t,dur:.06,a:.01,type:'bandpass',f:f*2,q:2,vol:vol*.25,dest:musG}); }
+  const wcCache={};   // Klavierakkord als ein Puffer
+  function wcBuf(c){ if(wcCache[c]) return wcCache[c]; const sr=ctx.sampleRate, len=Math.floor(sr*.9), buf=ctx.createBuffer(1,len,sr), d=buf.getChannelData(0);
+    WCH[c].n.forEach(m=>{ const s=pianoBuf(m).getChannelData(0); for(let i=0;i<len;i++) d[i]+=s[i]*.8; }); const fo=Math.floor(sr*.1); for(let i=0;i<fo;i++) d[len-1-i]*=i/fo; return wcCache[c]=buf; }
+  function schedW(b,t){
+    const B=WFORM[b], c=WCH[B.ch], v=B.v, off=s=>t+s*WE8+(s%2?WSW:0), barD=WE8*8;
+    // Streicher und Bass (ganz leise, Flo mag wenig Bass)
+    pad(c.n,t,barD,v===4?.035:.026);
+    if(v!==0||B.i>=2){ pluckS(c.r,'bass',off(0),.085,WE8*3); pluckS(c.q,'bass',off(4),.07,WE8*3); }
+    // Klavier: Grundton auf 1, Akkord auf 2 und 4, im Moll-Teil gebrochene Akkorde
+    piano(c.r+12,off(0),.055,WE8*3.5);
+    if(v===4){ const ar=[c.n[0],c.n[1],c.n[2],c.n[0]+12]; [1,2,3,5,6,7].forEach((s,k)=>piano(ar[k%4],off(s),.045,WE8*1.6)); }
+    else { playBuf(wcBuf(B.ch),1,off(2),.04,WE8*1.7); playBuf(wcBuf(B.ch),1,off(6),.04,WE8*1.7); }
+    // Schlittenglocken: auf jedem Schlag, leiser dazwischen; im Moll-Teil nur am Taktanfang
+    const jv=(v===0&&B.i<1)?.03:(v===5||v===6)?.06:.05;
+    if(v===4){ jingle(off(0),.035); }
+    else for(let s=0;s<8;s++) jingle(off(s),s%2?jv*.45:jv);
+    // ganz leichte Besen auf 2 und 4 in B, A und B (Wiederholung)
+    if(v===2||v===5||v===6){ brush(off(2),.04); brush(off(6),.04); }
+    // Hufgetrappel im Vor- und Nachspiel
+    if(v===0||v===7) [0,1,2,3,4,5,6,7].forEach(s=>clop(off(s),s%2===0));
+    // Celesta-Glöckchen: Arpeggio im Vor-/Nachspiel, Glitzer-Lauf am Phrasenende
+    if(v===0||v===7){ const ar=c.n.map(x=>x+12); [0,2,4,6].forEach((s,k)=>cel(ar[k%3]+(k===3?12:0),off(s)+WE8*.5,.08)); }
+    if(v===7&&B.i===3){ [0,1,2,3,4].forEach(k=>cel(89-k*2-(k>2?1:0),off(4)+k*WE8*.5,.07)); }
+    if((v===1||v===3||v===5)&&(B.i===3||B.i===7)){ const ar=c.n.map(x=>x+24); [0,1,2].forEach(k=>cel(ar[k],off(5)+k*WE8*.5,.06)); }
+    // Melodie
+    B.mel.forEach(n=>{ const tt=off(n.s), d=Math.max(.16,n.len*WE8*.95);
+      if(v===1||v===5){ cel(n.m+12,tt,.15); piano(n.m,tt,v===5?.07:.05,d+.2); }
+      if(v===2||v===6){ piano(n.m,tt,.12,d+.25); piano(n.m-12,tt,.05,d+.2); if(n.len>=2) cel(n.m+12,tt,.07); }
+      if(v===3){ cel(n.m+12,tt,.14); piano(n.m,tt,.08,d+.2); if(B.i>=2) cel(wthird(n.m)+12,tt,.06); }
+      if(v===4){ flute(n.m,tt,d,.07); if(n.len>=4) cel(n.m+12,tt,.05); }
+    });
+  }
+  function warmW(){ jingleBufs(); Object.keys(WCH).forEach(wcBuf); }
+  // Jahreszeit wechseln: Musik blendet aus und die andere setzt von vorne ein
+  let wint=false, wSwitch=0;
+  function season(w){ w=!!w; if(w===wint&&!wSwitch) return;
+    clearTimeout(wSwitch); wSwitch=0;
+    if(!ctx||!musOn){ wint=w; bar=0; return; }
+    const t=ctx.currentTime, g=musG.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value,t); g.linearRampToValueAtTime(0,t+1.4);
+    wSwitch=setTimeout(()=>{ wSwitch=0; wint=w; bar=0; if(!ctx||!musOn) return; if(w) warmW(); const t2=ctx.currentTime; nextT=t2+.15; g.cancelScheduledValues(t2); g.setValueAtTime(g.value,t2); g.linearRampToValueAtTime(MUS_VOL,t2+1.5); pump(); },1600);
+  }
   function pump(){
-    if(!ctx||!musOn) return;
+    if(!ctx||!musOn||wSwitch) return;
     const ahead=ctx.currentTime+.7;
     if(nextT<ctx.currentTime) nextT=ctx.currentTime+.08;   // nach Pause/Hintergrund wieder sauber einsetzen
-    while(nextT<ahead){ schedBar(bar,nextT); nextT+=E8*8; bar=(bar+1)%FORM.length; }
+    while(nextT<ahead){ if(wint){ if(bar>=WFORM.length) bar=0; schedW(bar,nextT); nextT+=WE8*8; bar=(bar+1)%WFORM.length; } else { if(bar>=FORM.length) bar=0; schedBar(bar,nextT); nextT+=E8*8; bar=(bar+1)%FORM.length; } }
   }
   function musicOn(){
     if(!ctx||musOn) return; musOn=true;
     const t=ctx.currentTime; musG.gain.cancelScheduledValues(t); musG.gain.setValueAtTime(musG.gain.value,t); musG.gain.linearRampToValueAtTime(MUS_VOL,t+2);
     Object.keys(CH).forEach(k=>{ strumBuf(k,false); strumBuf(k,true); pcBuf(k); });   // Gitarrenschläge vorab berechnen
+    if(wint) warmW();   // Version 163: Weihnachtsmusik
     nextT=0; pump(); timer=setInterval(pump,250);
   }
   function musicOff(){
@@ -661,7 +752,7 @@ const SND=(()=>{
   function setVol(k,v){ cfg[k]=Math.max(0,Math.min(1,v)); save(); MUS_VOL=.19*cfg.mv; SFX_VOL=.55*cfg.sv; if(!ctx) return; const t=ctx.currentTime;
     if(k==='mv'&&cfg.mus&&musOn){ musG.gain.cancelScheduledValues(t); musG.gain.setTargetAtTime(MUS_VOL,t,.05); }
     if(k==='sv'&&cfg.sfx){ sfxG.gain.cancelScheduledValues(t); sfxG.gain.setTargetAtTime(SFX_VOL,t,.05); } }
-  return {play,engine,rev,rain,syncBtns,duck,setVol,get vol(){ return {sv:cfg.sv,mv:cfg.mv}; },get on(){ return cfg.sfx; }};
+  return {play,engine,rev,rain,syncBtns,duck,setVol,season,get vol(){ return {sv:cfg.sv,mv:cfg.mv}; },get on(){ return cfg.sfx; }};
 })();
 // Ton-Menü (Version 127, Flo): 🎚️ unter den Weg-Knöpfen öffnet Ein/Aus und Lautstärke für Effekte und Musik
 (()=>{ const btn=document.getElementById('zsnd'), pan=document.getElementById('sndpanel'); if(!btn||!pan) return;
@@ -730,7 +821,8 @@ const SUMMER_ROUNDS=40, WINTER_ROUNDS=30;   // Version 160 (Flo): Winter schon n
 let SANTA=false, WINTER=false, SEASON0=0, NGLX=null, STILES=null, SEAST=0;
 // Version 156 (Flo): heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter (Namen kommen online vom Gastgeber → überall gleich)
 const winterAt=r=>SANTA||((r+SEASON0)%(SUMMER_ROUNDS+WINTER_ROUNDS))>=SUMMER_ROUNDS;
-function setWinter(on,fade){ on=!!on; if(on===WINTER) return; const live=!document.getElementById('game').hidden;
+function setWinter(on,fade){ on=!!on; if(on===WINTER) return; try{ SND.season(on); }catch(_){}   // Version 163: Weihnachtsmusik im Winter
+  const live=!document.getElementById('game').hidden;
   if(fade&&live&&DECOR) bgSnap(); else bgSnapDrop(false);
   WINTER=on; document.documentElement.classList.toggle('winter',on); NGLX=null;
   if(DECOR){ for(const t of BG.tiles.values()) t.c.width=t.c.height=0; BG.tiles.clear(); BG.job=null; BG.queue=[]; if(BG.over) BG.over.c.width=BG.over.c.height=0; BG.over=null; BG.pend=false; }
