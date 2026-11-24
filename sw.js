@@ -1,6 +1,6 @@
 // Offline-Speicher der Rallye: Das Spiel wird beim ersten Besuch gemerkt und läuft danach auch ohne Internet
 // (der Onlinemodus braucht natürlich Internet). Neue Versionen werden beim nächsten Start geholt.
-const CACHE='rallye-v160';
+const CACHE='rallye-v162';
 const FILES=['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./favicon.ico'];
 self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())); });
 self.addEventListener('activate',e=>{ e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())); });
