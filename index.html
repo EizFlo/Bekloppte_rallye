@@ -276,7 +276,7 @@ html.night #die{box-shadow:0 0 12px rgba(255,213,74,.25)}
     <p>⛴️ Fähren (blau gestrichelt) verbinden Länder über das Meer. Auf dem Wasser wird dein Auto zum Boot.</p>
     <p>💥 Wer auf ein besetztes Feld fährt, rempelt den anderen 2 Orte zurück.</p>
     <p>🏆 Am Ende gewinnt, wer das meiste Geld plus Wert seiner Objekte hat. Die Karte folgt deinem Wagen. Mit dem oberen Knopf wechselst du zwischen naher und weiter Ansicht, 🌍 zeigt die ganze Karte. 🔊 schaltet die Soundeffekte und 🎵 die Musik ein und aus. Nach 6 Runden Tag kommen 4 Runden Nacht, danach die Steuerabrechnung, und es wird wieder Tag.</p>
-    <p>❄️ <b>Jahreszeiten</b>: Nach 50 Runden Sommer (5 Steuerabrechnungen) kommt für 30 Runden der Winter (3 Steuerabrechnungen), dann wieder der Sommer und so weiter. Im Winter liegt überall Schnee, Seen und Flüsse sind zugefroren, und in den Städten gibt es Weihnachtsmärkte. Statt Regen fällt im Winter Schnee. Heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter. 🎅</p>
+    <p>❄️ <b>Jahreszeiten</b>: Nach 40 Runden Sommer (4 Steuerabrechnungen) kommt für 30 Runden der Winter (3 Steuerabrechnungen), dann wieder der Sommer und so weiter. Im Winter liegt überall Schnee, Seen und Flüsse sind zugefroren, und in den Städten gibt es Weihnachtsmärkte. Statt Regen fällt im Winter Schnee. Heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter. 🎅</p>
   </details>
   <div id="onl">
     <div class="row"><span class="dot">🌐</span><span style="flex:1;font-weight:700">Online mit Freunden</span><button type="button" class="alt" id="onOpen">Online spielen</button></div>
@@ -720,7 +720,7 @@ function rainTick(){
 // ❄️ Jahreszeiten (Version 155, Flo): nach 5 Steuer-Zyklen Sommer (50 Runden) kommen 3 Steuer-Zyklen Winter (30 Runden), dann wieder Sommer.
 // Hängt nur an der Rundenzahl (kein Zufall) – online sehen alle Geräte immer dieselbe Jahreszeit. Die Winterkarte sind eigene Kacheln:
 // beim Wechsel werden die Sommerkacheln freigegeben und die Winterkacheln nach und nach gemalt (gleich viel Speicher wie vorher).
-const SUMMER_ROUNDS=50, WINTER_ROUNDS=30;
+const SUMMER_ROUNDS=40, WINTER_ROUNDS=30;   // Version 160 (Flo): Winter schon nach 4 Steuer-Zyklen (40 Runden), dauert weiter 3 Zyklen
 let SANTA=false, WINTER=false, SEASON0=0, NGLX=null, STILES=null, SEAST=0;
 // Version 156 (Flo): heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter (Namen kommen online vom Gastgeber → überall gleich)
 const winterAt=r=>SANTA||((r+SEASON0)%(SUMMER_ROUNDS+WINTER_ROUNDS))>=SUMMER_ROUNDS;
@@ -733,7 +733,7 @@ function setWinter(on,fade){ on=!!on; if(on===WINTER) return; const live=!docume
   if(fade&&live) seasonBanner(on); }
 function seasonBanner(on){ const el=document.getElementById('season'); if(!el) return; clearTimeout(SEAST);
   el.classList.toggle('sum',!on); el.firstChild.innerHTML=on?'<b>❄️ Der Winter ist da! 🎄</b><span>Frohe Weihnachten! Jetzt liegt Schnee – 30 Runden lang.</span>'
-    :'<b>☀️ Der Sommer kommt zurück! 🌷</b><span>Der Schnee schmilzt – jetzt 50 Runden Sommer.</span>';
+    :'<b>☀️ Der Sommer kommt zurück! 🌷</b><span>Der Schnee schmilzt – jetzt 40 Runden Sommer.</span>';
   el.hidden=true; void el.offsetWidth; el.hidden=false; SEAST=setTimeout(()=>{ el.hidden=true; },5100); }
 // eine Runde vorher im Leerlauf die Farbmuster der nächsten Jahreszeit vorbereiten (damit der Wechsel nicht hakt)
 function seasonPrep(w){ if(!DECOR) return; const ric=window.requestIdleCallback||(f=>setTimeout(f,200)); ric(()=>{ try{ bgPats(w); }catch(_){} },{timeout:4000}); }
@@ -801,6 +801,7 @@ function goalBar(){ if(GOAL<0) return; $('#goal').textContent=(STAGES>1?`Etappe 
 // Version 154 (Flo): Baustellen seltener – etwa 1 zu 8 pro Runde, immer nur eine neue, höchstens 3 gleichzeitig, kein Fenster bei neuen.
 // Version 157 (Flo): keine Start-Jahreszeit im Startmenü mehr – Winter von Anfang an nur mit „Santa Claus“.
 // Version 156 (Flo): Fahrer „Santa Claus“ = das ganze Spiel Winter.
+// Version 160 (Flo): Winter schon nach 40 Runden Sommer (4 Steuer-Zyklen), dann wie bisher 30 Runden Winter.
 // Version 155 (Flo): Winter und Weihnachten – nach 50 Runden Sommer 30 Runden Winter (verschneite Karte als eigene Kacheln, Eis, Weihnachtsmärkte, Schnee statt Regen).
 // Version 153 (Flo): „Neues Spiel“/„Nochmal spielen“ ist ein kompletter Neustart (resetWorld): Spielstände, Tag/Nacht, Regen, Baustellen,
 //   Nägel, Anhalter, Gebäude, Karten, Kamera, Log, Fenster und Timer werden zurückgesetzt. Online-Verbindung und Namen bleiben.
@@ -5262,7 +5263,7 @@ async function roundEnd(){
   { const k=ROUND%(DAY_ROUNDS+NIGHT_ROUNDS), n=k>=DAY_ROUNDS;   // nach Runde 6 wird es Nacht, nach Runde 10 (nach den Steuern) wieder Tag
     if(n!==NIGHT){ setNight(n,true); say(n?'🌙 Es wird Nacht. Die Scheinwerfer gehen an.':'☀️ Die Sonne geht auf, es wird Tag.'); } }
   { const w=winterAt(ROUND);   // ❄️ Version 155: nach 50 Runden Sommer kommt der Winter (30 Runden), dann wieder der Sommer
-    if(w!==WINTER){ setWinter(w,true); say(w?'❄️ Der Winter ist da – Frohe Weihnachten! 30 Runden liegt jetzt Schnee.':'☀️ Der Schnee schmilzt, der Sommer kommt zurück (50 Runden).'); goalBar(); }
+    if(w!==WINTER){ setWinter(w,true); say(w?'❄️ Der Winter ist da – Frohe Weihnachten! 30 Runden liegt jetzt Schnee.':'☀️ Der Schnee schmilzt, der Sommer kommt zurück (40 Runden).'); goalBar(); }
     else if(winterAt(ROUND+1)!==WINTER) seasonPrep(!WINTER); }
   rainTick();
   await worksTick();
