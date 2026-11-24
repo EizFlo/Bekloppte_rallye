@@ -114,6 +114,18 @@ button.off{position:relative}button.off::after{content:'';position:absolute;left
 #rain .rl b{position:absolute;left:0;right:0;top:-256px;bottom:0;background-repeat:repeat;will-change:transform;animation:rainf .42s linear infinite}
 #rain .rl b.r2{top:-192px;animation:rainf2 .62s linear infinite;opacity:.7}
 @keyframes rainf{to{transform:translateY(256px)}}@keyframes rainf2{to{transform:translateY(192px)}}
+#rain.snow{background:rgba(214,226,242,.16)}#rain.snow .rl{transform:none;animation:snowsway 4.5s ease-in-out infinite alternate}
+#rain.snow .rl b{animation-duration:7s}#rain.snow .rl b.r2{animation-duration:10.5s;opacity:.9}
+@keyframes snowsway{from{transform:rotate(7deg) translateX(-22px)}to{transform:rotate(-3deg) translateX(22px)}}
+html.night #rain.snow{background:rgba(30,44,80,.10)}html.night #rain.snow .rl b{opacity:.85}html.night #rain.snow .rl b.r2{opacity:.7}
+#bgx{position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none;transition:opacity 2.8s ease}
+#season{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none}#season[hidden]{display:none}
+#season .sb{background:linear-gradient(#ffffff,#e3eefa);border:3px solid #2b2118;border-radius:18px;padding:12px 22px 13px;text-align:center;max-width:84%;box-shadow:inset 0 0 0 3px #fff,0 5px 0 #2b2118,0 12px 30px rgba(0,0,0,.35);animation:seasonin 5s ease forwards}
+#season .sb b{display:block;font-size:27px;line-height:1.15;color:#c8402b}#season .sb span{display:block;margin-top:5px;font-size:15px;font-weight:700;color:#2d4c70}
+#season.sum .sb{background:linear-gradient(#fffbe8,#ffe8a6)}#season.sum .sb b{color:#2f8a3e}#season.sum .sb span{color:#6b4a1e}
+@keyframes seasonin{0%{opacity:0;transform:scale(.6) translateY(24px)}10%{opacity:1;transform:scale(1.06)}17%{transform:scale(1)}84%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-16px) scale(.96)}}
+html.winter #mapb path[stroke="#d9c69a"]{stroke:#b9c9da}html.winter #mapb path[stroke="#f8efd6"]{stroke:#f6faff}html.winter #mapb path[stroke="#6e5a3a"]{stroke:#7f90a6}
+html.winter #mapb path[stroke="#d8c59c"]{stroke:#eef4fa}html.winter #mapb path[stroke="#f1e4c0"]{stroke:#ffffff}html.winter #mapb path[fill="#e2cf9f"]{fill:#f4f8fc}html.winter #mapb path[stroke="#9c8460"]{stroke:#9aa3ad}
 html.night #rain{background:rgba(8,14,34,.22)}html.night #rain .rl b{opacity:.55}html.night #rain .rl b.r2{opacity:.35}
 #fwc{position:absolute;left:0;top:0;width:100%;height:100%;z-index:3;pointer-events:none;will-change:transform}#fwc[hidden]{display:none}
 /* nur der Inhalt scrollt, innerhalb des Goldrahmens (Rahmen bleibt stehen, Text verschwindet an seiner Innenkante) */
@@ -264,6 +276,7 @@ html.night #die{box-shadow:0 0 12px rgba(255,213,74,.25)}
     <p>⛴️ Fähren (blau gestrichelt) verbinden Länder über das Meer. Auf dem Wasser wird dein Auto zum Boot.</p>
     <p>💥 Wer auf ein besetztes Feld fährt, rempelt den anderen 2 Orte zurück.</p>
     <p>🏆 Am Ende gewinnt, wer das meiste Geld plus Wert seiner Objekte hat. Die Karte folgt deinem Wagen. Mit dem oberen Knopf wechselst du zwischen naher und weiter Ansicht, 🌍 zeigt die ganze Karte. 🔊 schaltet die Soundeffekte und 🎵 die Musik ein und aus. Nach 6 Runden Tag kommen 4 Runden Nacht, danach die Steuerabrechnung, und es wird wieder Tag.</p>
+    <p>❄️ <b>Jahreszeiten</b>: Nach 50 Runden Sommer (5 Steuerabrechnungen) kommt für 30 Runden der Winter (3 Steuerabrechnungen), dann wieder der Sommer und so weiter. Im Winter liegt überall Schnee, Seen und Flüsse sind zugefroren, und in den Städten gibt es Weihnachtsmärkte. Statt Regen fällt im Winter Schnee. Heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter. 🎅</p>
   </details>
   <div id="onl">
     <div class="row"><span class="dot">🌐</span><span style="flex:1;font-weight:700">Online mit Freunden</span><button type="button" class="alt" id="onOpen">Online spielen</button></div>
@@ -288,7 +301,7 @@ html.night #die{box-shadow:0 0 12px rgba(255,213,74,.25)}
 <div id="game" hidden>
   <div id="goal"></div>
   <div id="netbar" hidden></div>
-  <div id="mapwrap"><canvas id="bgc"></canvas><div id="mapz"><div id="mapl"><svg id="mapb"></svg><svg id="mapr"></svg><svg id="map"></svg></div></div><canvas id="lbc"></canvas><svg id="mapo" viewBox="0 0 390 420"></svg><div id="rain" hidden><div class="rl"><b class="r1"></b><b class="r2"></b></div></div><canvas id="fwc" hidden></canvas><button id="lookback" class="big" hidden>↩️ Zurück</button><div id="popup" hidden><div id="pscroll"><div id="pmsg"></div><div id="pbtns"></div></div></div><div id="screen" hidden><div class="cloth"><div class="stitle" id="stitle"></div><svg id="scrsvg" preserveAspectRatio="xMidYMid meet"></svg><div class="pull"></div></div><div class="casing"></div></div><div class="zoom"><button id="zmode" title="Nah / weit">Nah</button><button id="zall" title="Ganze Karte">🌍</button><button id="zblue" class="zroute" title="Blauen Weg fahren" aria-label="Blauen Weg fahren" disabled>🧭</button><button id="zyel" class="zroute" title="Gelben Weg zum Anhalter-Ziel fahren" aria-label="Gelben Weg fahren" disabled hidden>🧍</button><button id="zsnd" title="Ton-Menü" aria-label="Ton-Menü" aria-expanded="false">🎚️</button><div id="sndpanel" hidden><div class="sr"><button data-snd="sfx" title="Soundeffekte an/aus" aria-label="Soundeffekte">🔊</button><input type="range" id="vsfx" min="0" max="100" step="5" aria-label="Lautstärke Effekte"><span class="vl" id="vsfxl"></span></div><div class="sr"><button data-snd="mus" title="Musik an/aus" aria-label="Musik">🎵</button><input type="range" id="vmus" min="0" max="100" step="5" aria-label="Lautstärke Musik"><span class="vl" id="vmusl"></span></div></div></div></div>
+  <div id="mapwrap"><canvas id="bgc"></canvas><div id="mapz"><div id="mapl"><svg id="mapb"></svg><svg id="mapr"></svg><svg id="map"></svg></div></div><canvas id="lbc"></canvas><svg id="mapo" viewBox="0 0 390 420"></svg><div id="rain" hidden><div class="rl"><b class="r1"></b><b class="r2"></b></div></div><div id="season" hidden><div class="sb"></div></div><canvas id="fwc" hidden></canvas><button id="lookback" class="big" hidden>↩️ Zurück</button><div id="popup" hidden><div id="pscroll"><div id="pmsg"></div><div id="pbtns"></div></div></div><div id="screen" hidden><div class="cloth"><div class="stitle" id="stitle"></div><svg id="scrsvg" preserveAspectRatio="xMidYMid meet"></svg><div class="pull"></div></div><div class="casing"></div></div><div class="zoom"><button id="zmode" title="Nah / weit">Nah</button><button id="zall" title="Ganze Karte">🌍</button><button id="zblue" class="zroute" title="Blauen Weg fahren" aria-label="Blauen Weg fahren" disabled>🧭</button><button id="zyel" class="zroute" title="Gelben Weg zum Anhalter-Ziel fahren" aria-label="Gelben Weg fahren" disabled hidden>🧍</button><button id="zsnd" title="Ton-Menü" aria-label="Ton-Menü" aria-expanded="false">🎚️</button><div id="sndpanel" hidden><div class="sr"><button data-snd="sfx" title="Soundeffekte an/aus" aria-label="Soundeffekte">🔊</button><input type="range" id="vsfx" min="0" max="100" step="5" aria-label="Lautstärke Effekte"><span class="vl" id="vsfxl"></span></div><div class="sr"><button data-snd="mus" title="Musik an/aus" aria-label="Musik">🎵</button><input type="range" id="vmus" min="0" max="100" step="5" aria-label="Lautstärke Musik"><span class="vl" id="vmusl"></span></div></div></div></div>
   <div id="score"></div>
   <div id="panel"><div id="die">⚀</div><div id="pr"><div id="msg"></div><div id="btns"></div></div></div>
   <div id="hint"></div>
@@ -419,12 +432,14 @@ const SND=(()=>{
   function play(name,...a){ if(!ok()) return; try{ FX[name](...a); }catch(_){} }
   // 🌧️ Regenrauschen (Version 152): gefiltertes Rauschen in Schleife, leise, weich ein- und ausgeblendet; läuft über die Effekt-Lautstärke
   let rainN=null, rainWant=false;
+  // Version 155: im Winter (Schnee) ein leiser, dumpfer Wind statt Regenrauschen
   function rain(on){ rainWant=!!on; if(!ctx||ctx.state!=='running') return;
-    const t=ctx.currentTime;
+    const t=ctx.currentTime, sn=typeof WINTER!=='undefined'&&WINTER;
+    if(on&&rainN&&rainN.sn!==sn){ const r=rainN; rainN=null; r.g.gain.cancelScheduledValues(t); r.g.gain.setValueAtTime(Math.max(.0001,r.g.gain.value),t); r.g.gain.exponentialRampToValueAtTime(.0001,t+2); r.src.stop(t+2.1); }
     if(on&&!rainN){ const src=ctx.createBufferSource(), hp=ctx.createBiquadFilter(), lp=ctx.createBiquadFilter(), g=ctx.createGain();
-      src.buffer=noiseBuf; src.loop=true; src.playbackRate.value=.9; hp.type='highpass'; hp.frequency.value=500; lp.type='lowpass'; lp.frequency.value=3200; lp.Q.value=.4;
-      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.06,t+2.5);
-      src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(sfxG); src.start(t); rainN={src,g}; }
+      src.buffer=noiseBuf; src.loop=true; src.playbackRate.value=sn?.5:.9; hp.type='highpass'; hp.frequency.value=sn?140:500; lp.type='lowpass'; lp.frequency.value=sn?650:3200; lp.Q.value=sn?1.2:.4;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(sn?.045:.06,t+2.5);
+      src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(sfxG); src.start(t); rainN={src,g,sn}; }
     else if(!on&&rainN){ const r=rainN; rainN=null; r.g.gain.cancelScheduledValues(t); r.g.gain.setValueAtTime(Math.max(.0001,r.g.gain.value),t); r.g.gain.exponentialRampToValueAtTime(.0001,t+2.5); r.src.stop(t+2.6); } }
 
   // ---- Motorbrummen beim Fahren (ein Klang, der über mehrere Straßenstücke weiterläuft) ----
@@ -688,8 +703,7 @@ function rainTile(sz,n,len,alpha,seed){ const c=document.createElement('canvas')
 let RTILES=null;
 function setRain(on,fade){ const el=document.getElementById('rain'); if(!el) return;
   const live=!document.getElementById('game').hidden;
-  if(on&&!RTILES){ RTILES=[rainTile(256,46,30,.75,7),rainTile(192,40,18,.55,23)];
-    el.querySelector('.r1').style.backgroundImage=`url(${RTILES[0]})`; el.querySelector('.r2').style.backgroundImage=`url(${RTILES[1]})`; }
+  if(on) rainLook();   // Version 155: im Winter Schneeflocken statt Tropfen
   clearTimeout(RAINT);
   if(on){ el.hidden=false; void el.offsetWidth; el.classList.add('on'); }
   else { el.classList.remove('on'); RAINT=setTimeout(()=>{ if(!RAIN) el.hidden=true; },fade&&live?2400:0); }
@@ -700,9 +714,42 @@ function setRain(on,fade){ const el=document.getElementById('rain'); if(!el) ret
   const step=now=>{ if(id!==RFADE) return; const u=Math.min(1,(now-t0)/D); RAINA=from+(to-from)*u*u*(3-2*u); lblDraw(); if(u<1) requestAnimationFrame(step); };
   requestAnimationFrame(step); }
 function rainTick(){
-  if(RAIN>0){ RAIN--; if(!RAIN){ setRain(false,true); say('🌤️ Der Regen hört auf, die Straßen trocknen.'); goalBar(); } return; }
-  if(ROUND>=2&&grand()<RAIN_P){ RAIN=RAIN_MIN+rnd(RAIN_VAR); setRain(true,true); say(`🌧️ Es fängt an zu regnen (${RAIN} Runden).`); goalBar(); }
+  if(RAIN>0){ RAIN--; if(!RAIN){ setRain(false,true); say(WINTER?'🌤️ Es hört auf zu schneien.':'🌤️ Der Regen hört auf, die Straßen trocknen.'); goalBar(); } return; }
+  if(ROUND>=2&&grand()<RAIN_P){ RAIN=RAIN_MIN+rnd(RAIN_VAR); setRain(true,true); say(WINTER?`❄️ Es fängt an zu schneien (${RAIN} Runden).`:`🌧️ Es fängt an zu regnen (${RAIN} Runden).`); goalBar(); }
 }
+// ❄️ Jahreszeiten (Version 155, Flo): nach 5 Steuer-Zyklen Sommer (50 Runden) kommen 3 Steuer-Zyklen Winter (30 Runden), dann wieder Sommer.
+// Hängt nur an der Rundenzahl (kein Zufall) – online sehen alle Geräte immer dieselbe Jahreszeit. Die Winterkarte sind eigene Kacheln:
+// beim Wechsel werden die Sommerkacheln freigegeben und die Winterkacheln nach und nach gemalt (gleich viel Speicher wie vorher).
+const SUMMER_ROUNDS=50, WINTER_ROUNDS=30;
+let SANTA=false, WINTER=false, SEASON0=0, NGLX=null, STILES=null, SEAST=0;
+// Version 156 (Flo): heißt ein Fahrer „Santa Claus“, bleibt das ganze Spiel Winter (Namen kommen online vom Gastgeber → überall gleich)
+const winterAt=r=>SANTA||((r+SEASON0)%(SUMMER_ROUNDS+WINTER_ROUNDS))>=SUMMER_ROUNDS;
+function setWinter(on,fade){ on=!!on; if(on===WINTER) return; const live=!document.getElementById('game').hidden;
+  if(fade&&live&&DECOR) bgSnap(); else bgSnapDrop(false);
+  WINTER=on; document.documentElement.classList.toggle('winter',on); NGLX=null;
+  if(DECOR){ for(const t of BG.tiles.values()) t.c.width=t.c.height=0; BG.tiles.clear(); BG.job=null; BG.queue=[]; if(BG.over) BG.over.c.width=BG.over.c.height=0; BG.over=null; BG.pend=false; }
+  if(RAIN){ rainLook(); try{ SND.rain(live); }catch(_){} }
+  if(live){ try{ bgDraw(); lblDraw(); }catch(e){ console.warn(e); } }
+  if(fade&&live) seasonBanner(on); }
+function seasonBanner(on){ const el=document.getElementById('season'); if(!el) return; clearTimeout(SEAST);
+  el.classList.toggle('sum',!on); el.firstChild.innerHTML=on?'<b>❄️ Der Winter ist da! 🎄</b><span>Frohe Weihnachten! Jetzt liegt Schnee – 30 Runden lang.</span>'
+    :'<b>☀️ Der Sommer kommt zurück! 🌷</b><span>Der Schnee schmilzt – jetzt 50 Runden Sommer.</span>';
+  el.hidden=true; void el.offsetWidth; el.hidden=false; SEAST=setTimeout(()=>{ el.hidden=true; },5100); }
+// eine Runde vorher im Leerlauf die Farbmuster der nächsten Jahreszeit vorbereiten (damit der Wechsel nicht hakt)
+function seasonPrep(w){ if(!DECOR) return; const ric=window.requestIdleCallback||(f=>setTimeout(f,200)); ric(()=>{ try{ bgPats(w); }catch(_){} },{timeout:4000}); }
+function snowTile(sz,n,rmax,seed){ const c=document.createElement('canvas'); c.width=c.height=sz; const g=c.getContext('2d');
+  let r=seed; const q=()=>((r=(r*1103515245+12345)>>>0)/4294967296);   // nur Optik: eigener kleiner Zufall
+  for(let i=0;i<n;i++){ const x=q()*sz, y=q()*sz, rr=rmax*(.45+q()*.55), a=.65+q()*.35;
+    for(const dy of [0,-sz,sz]) for(const dx of [0,-sz,sz]){ if(x+dx<-rr*2||x+dx>sz+rr*2||y+dy<-rr*2||y+dy>sz+rr*2) continue;
+      const gr=g.createRadialGradient(x+dx,y+dy,0,x+dx,y+dy,rr); gr.addColorStop(0,`rgba(255,255,255,${a})`); gr.addColorStop(.55,`rgba(255,255,255,${a*.8})`); gr.addColorStop(1,'rgba(255,255,255,0)');
+      g.fillStyle=gr; g.beginPath(); g.arc(x+dx,y+dy,rr,0,6.283); g.fill(); } }
+  return c.toDataURL(); }
+// Regen- oder Schnee-Bild für die Wetter-Ebene (je nach Jahreszeit)
+function rainLook(){ const el=document.getElementById('rain'); if(!el) return; const sn=WINTER; el.classList.toggle('snow',sn);
+  const want=sn?'s':'r'; if(el._look===want) return; el._look=want; let T;
+  if(sn){ if(!STILES) STILES=[snowTile(256,30,4.2,11),snowTile(192,44,2.6,29)]; T=STILES; }
+  else { if(!RTILES) RTILES=[rainTile(256,46,30,.75,7),rainTile(192,40,18,.55,23)]; T=RTILES; }
+  el.querySelector('.r1').style.backgroundImage=`url(${T[0]})`; el.querySelector('.r2').style.backgroundImage=`url(${T[1]})`; }
 // Nasse Straßen: Glanzstreifen auf der Fahrbahn (nicht über den Feldern) und ein paar feste Pfützen je Straßenstück
 let WET=null;
 function wetRoads(){ if(WET) return WET; WET=[];
@@ -720,6 +767,13 @@ function wetRoads(){ if(WET) return WET; WET=[];
 function rainDraw(g,vx,vy,x1,y1){
   const vis=[]; for(const w of wetRoads()){ const b=w.b; if(b[0]<x1&&b[2]>vx&&b[1]<y1&&b[3]>vy) vis.push(w); } if(!vis.length) return;
   g.save(); g.globalAlpha=RAINA; g.lineCap='round'; g.lineJoin='round';
+  if(WINTER){   // ❄️ Version 155: bei Schneefall bleibt Schnee auf der Fahrbahn liegen, am Rand kleine Schneehaufen
+    g.beginPath(); for(const w of vis){ const p=w.line; g.moveTo(p[0],p[1]); for(let i=2;i<p.length;i+=2) g.lineTo(p[i],p[i+1]); }
+    g.strokeStyle='rgba(240,246,255,.42)'; g.lineWidth=12; g.setLineDash([34,10,12,14]); g.stroke(); g.strokeStyle='rgba(255,255,255,.55)'; g.lineWidth=4; g.setLineDash([8,20]); g.stroke(); g.setLineDash([]);
+    if(x1-vx<2600) for(const w of vis) for(const o of w.pud){ g.save(); g.translate(o.x,o.y); g.scale(1,ISO_S); g.rotate(o.ang);
+      g.fillStyle='rgba(120,150,205,.35)'; g.beginPath(); g.ellipse(1,2,o.r*1.5,o.r*.9,0,0,Math.PI*2); g.fill();
+      g.fillStyle='rgba(252,254,255,.95)'; g.beginPath(); g.ellipse(0,0,o.r*1.35,o.r*.8,0,0,Math.PI*2); g.fill(); g.restore(); }
+    g.restore(); return; }
   // dunkler, nasser Asphalt mit hellem Glanz in der Mitte
   g.beginPath(); for(const w of vis){ const p=w.line; g.moveTo(p[0],p[1]); for(let i=2;i<p.length;i+=2) g.lineTo(p[i],p[i+1]); }
   g.strokeStyle='rgba(30,40,62,.22)'; g.lineWidth=13; g.stroke();
@@ -740,11 +794,14 @@ const BONUS = [400,250,150,100];
 // Version 131 (Flo): Etappenpreis 400 € in Etappe 1, jede weitere Etappe 100 € mehr (500, 600, …), und in jeder Runde der Etappe 10 € mehr
 let STAGE_R0=0;
 const stagePrize=()=>BONUS[0]+100*Math.max(0,STAGE-1)+10*Math.max(0,ROUND-STAGE_R0);   // dazu +10 € pro Runde der laufenden Etappe
-function goalBar(){ if(GOAL<0) return; $('#goal').textContent=(STAGES>1?`Etappe ${STAGE}/${STAGES} · `:'')+`🎯 Ziel: ${CITIES[GOAL].n} · 🏆 ${stagePrize()} €`+(RAIN?' · 🌧️':''); }
+function goalBar(){ if(GOAL<0) return; $('#goal').textContent=(STAGES>1?`Etappe ${STAGE}/${STAGES} · `:'')+`🎯 Ziel: ${CITIES[GOAL].n} · 🏆 ${stagePrize()} €`+(RAIN?(WINTER?' · ❄️':' · 🌧️'):''); }
 // Version 140 (Flo): Runterwischen auf dem Handy lädt die Seite nicht mehr neu; während eines Spiels fragt der Browser vor dem Neuladen/Schließen nach.
 // Version 146 (Flo): Küstenstraßen begradigt und landeinwärts gelegt (Dubrovnik–Kotor–Durrës, Ventspils–Liepāja–Klaipėda, Peloponnes bei Kalamata, Venedig–Udine–Triest–Pula, Rimini); Park mit Statue bringt 5 % Miete (30 €) und zählt beim Stadt-Bonus mit.
 // Version 148 (Flo): Bogen unter der Brücke auch bei schrägen Brücken.
 // Version 154 (Flo): Baustellen seltener – etwa 1 zu 8 pro Runde, immer nur eine neue, höchstens 3 gleichzeitig, kein Fenster bei neuen.
+// Version 157 (Flo): keine Start-Jahreszeit im Startmenü mehr – Winter von Anfang an nur mit „Santa Claus“.
+// Version 156 (Flo): Fahrer „Santa Claus“ = das ganze Spiel Winter.
+// Version 155 (Flo): Winter und Weihnachten – nach 50 Runden Sommer 30 Runden Winter (verschneite Karte als eigene Kacheln, Eis, Weihnachtsmärkte, Schnee statt Regen).
 // Version 153 (Flo): „Neues Spiel“/„Nochmal spielen“ ist ein kompletter Neustart (resetWorld): Spielstände, Tag/Nacht, Regen, Baustellen,
 //   Nägel, Anhalter, Gebäude, Karten, Kamera, Log, Fenster und Timer werden zurückgesetzt. Online-Verbindung und Namen bleiben.
 // Version 152 (Flo): zufälliger Regen (nur Optik), siehe setRain/rainTick.
@@ -1222,6 +1279,7 @@ function resetWorld(){
   gameId++; askSeq++; choice=null; GAME_LIVE=false;   // alte Züge, Fenster-Timer und Wartende brechen ab
   clearTimeout(RTW); RTW=0; HANDOFF=null;
   setNight(false); RAIN=0; setRain(false);           // immer Tag, kein Regen (auch die Oberfläche im Menü wieder hell)
+  SANTA=false; SEASON0=0; setWinter(false); clearTimeout(SEAST); { const s=$('#season'); if(s) s.hidden=true; }   // Version 155: immer im Sommer
   STAGE=1; ROUND=0; STAGE_R0=0; STAGE_HIKERS=0; START=START0; usedGoals=[]; owned={}; PARKS=new Set();
   NAILS=new Map(); WORKS=new Map(); WORKS_SEQ=0; DISTN=[]; HIKERS=[]; HIKER_SEQ=0; hikerShown=false;
   GOAL=-1; DIST=[]; stageOver=false;
@@ -1354,11 +1412,49 @@ function buildDecor(){
     ['skin','#f6cfa6',ink,1.6],['armI',null,ink,4.4],['arm',null,'#f6cfa6',2.4],['cow','#ffffff',ink,1.8],['spot','#2b2118',null,0],['moose','#7a4e2c',ink,2],['antler','#efd9a7',ink,1.6],
     ['troll','#93a874',ink,2.2],['bull','#3b3330',ink,2],['horn','#fff4d6',ink,1.4],['fieldG','#cfe07a',ink,2.6],['stem',null,'#4f8f2f',1.6],['sunfl','#ffcf2e',ink,1.2],['sunC','#6b3d1d',null,0],
     ['olive','#8fae6a',ink,2],['oliveHi','#c4d89f',null,0],['tent','#f08a3c',ink,2],['tentD','#a8521e',ink,1.6],['tentacle','#b75aa0',ink,2.4],['suck','#f6cbe8',null,0],['serp','#4fae6e',ink,2.2],
-    ['beam','rgba(255,240,140,.5)',null,0],['ufo','#c9d2de',ink,2.2],['crop',null,'#b98236',3],['shark','#7f8da0',ink,2],['duck','#ffd93d',ink,1.8],['beak','#ff8a1e',ink,1.2],['bat','#2f2a2a',null,0],['fall','#e9f8ff',ink,1.6]
+    ['beam','rgba(255,240,140,.5)',null,0],['ufo','#c9d2de',ink,2.2],['crop',null,'#b98236',3],['shark','#7f8da0',ink,2],['duck','#ffd93d',ink,1.8],['beak','#ff8a1e',ink,1.2],['bat','#2f2a2a',null,0],['fall','#e9f8ff',ink,1.6],
+    // ❄️ Version 155: Winter-Ebenen. Im Sommer ohne Farbe (werden gar nicht gemalt), im Winter über LSW gefärbt
+    ['wDriftS',null,null,0],['wDrift',null,null,0],
+    ['wShadow',null,null,0],['wFloeS',null,null,0],['wFloe',null,null,0],['wWood',null,null,0],['wXtree',null,null,0],['wXtreeS',null,null,0],['wGarl',null,null,0],
+    ['wSnow',null,null,0],['wSnowS',null,null,0],['wTwig',null,null,0],['wCoal',null,null,0],['wCarrot',null,null,0],
+    ['wDeerL',null,null,0],['wDeer',null,null,0],['wDeerB',null,null,0],['wAntler',null,null,0],['wNose',null,null,0],
+    ['wRun',null,null,0],['wRoofR',null,null,0],['wRoofW',null,null,0],['wHouse',null,null,0],['wCloth',null,null,0],['wGift1',null,null,0],['wGift2',null,null,0],['wRibbon',null,null,0],
+    ['wSkin',null,null,0],['wCoatR',null,null,0],['wCoatB',null,null,0],['wLeg',null,null,0],
+    ['wWire',null,null,0],['wGlow',null,null,0],['wLR',null,null,0],['wLY',null,null,0],['wLG',null,null,0],['wLB',null,null,0],['wStar',null,null,0]
   ];
-  const FLAT=new Set(['reliefD','reliefL','ridgeLn','snowF','meadow','meadow2','tuft','flowerR','flowerY','flowerW','field','field2','furrow','dune','duneHi','wave']), LS_=new Map(L.map(l=>[l[0],l]));
+  const FLAT=new Set(['reliefD','reliefL','ridgeLn','snowF','meadow','meadow2','tuft','flowerR','flowerY','flowerW','field','field2','furrow','dune','duneHi','wave','wDriftS','wDrift']), LS_=new Map(L.map(l=>[l[0],l]));
+  // ❄️ Version 155: Winterfarben. Gleiche Formen wie im Sommer, nur andere Farben (Schnee, kahle Felder, gefrorene Seen),
+  // und die w…-Ebenen bekommen erst hier eine Farbe. SNOWT: Formen mit Schnee obendrauf (Dicke der Schneekante).
+  const LSW=new Map(LS_), WS=(k,fill,st,lw)=>{ const o=LS_.get(k); LSW.set(k,[k,fill,st===undefined?o[2]:st,lw===undefined?o[3]:lw]); };
+  WS('meadow','rgba(255,255,255,.5)'); WS('meadow2','rgba(110,140,195,.10)'); WS('reliefD','rgba(50,75,130,.12)'); WS('reliefL','rgba(255,255,255,.18)');
+  WS('tuft','rgba(92,124,104,.5)'); WS('flowerR',null); WS('flowerY',null); WS('flowerW','rgba(150,195,235,.7)');
+  WS('field','#eef4fa','rgba(70,90,120,.45)',2.2); WS('field2','#e1eaf4','rgba(70,90,120,.45)',2.2); WS('furrow',null,'rgba(135,162,196,.55)'); WS('fieldG','#e9f1f8');
+  WS('shadow','rgba(40,70,135,.20)'); WS('hill','#e8f0f8'); WS('hillHi','#ffffff'); WS('mtn','#a9a39d'); WS('mtnS','#7e7974');
+  WS('tree','#33774b'); WS('tree2','#43874f'); WS('treeHi','rgba(255,255,255,.9)'); WS('treeSh','rgba(10,40,45,.30)'); WS('pine','#205e48');
+  WS('bush','#41815a'); WS('bushHi','rgba(255,255,255,.9)'); WS('bushF','#397650'); WS('bushT','#ffffff');
+  WS('lake','#cde7f5'); WS('lakeRim','#ffffff'); WS('ripple',null,'rgba(115,155,195,.75)',1.4); WS('reed',null,'#9b8a5c');
+  WS('vine','#957652'); WS('vineF','#e9f0f7'); ['tulR','tulY','tulP','tulO','sunfl','sunC'].forEach(k=>WS(k,null,null,0)); WS('stem',null,'rgba(120,100,70,.55)'); WS('crop',null,'rgba(150,170,195,.6)');
+  WS('oliveHi','rgba(255,255,255,.75)'); WS('wave',null,'#f2fbff');
+  const W_=(k,fill,st,lw)=>LSW.set(k,[k,fill,st||null,lw||0]);
+  W_('wDriftS','rgba(105,140,200,.16)'); W_('wDrift','rgba(255,255,255,.85)');
+  W_('wShadow','rgba(40,70,135,.22)'); W_('wFloeS','#93c0dc',ink,1.8); W_('wFloe','#f4faff',ink,1.8); W_('wWood','#8a5a2b',ink,1.8);
+  W_('wXtree','#1f6a45',ink,2.2); W_('wXtreeS','rgba(6,40,24,.32)'); W_('wGarl',null,'#f6c432',1.6);
+  W_('wSnow','#fbfdff',ink,1.8); W_('wSnowS','rgba(120,150,205,.35)'); W_('wTwig',null,'#6b4423',1.6); W_('wCoal','#2b2118'); W_('wCarrot','#ff8a1e',ink,1);
+  W_('wDeerL',null,'#5b3b25',2.2); W_('wDeer','#9a6a3e',ink,1.8); W_('wDeerB','#ecd9b6'); W_('wAntler',null,'#e8d3a3',2.2); W_('wNose','#ff3b30');
+  W_('wRun',null,ink,2.2); W_('wRoofR','#d8453b',ink,1.8); W_('wRoofW','#fbf6ea'); W_('wHouse','#c9473c',ink,1.8); W_('wCloth','#fbf6ea',ink,1.4);
+  W_('wGift1','#3f9a4e',ink,1.4); W_('wGift2','#f2c230',ink,1.4); W_('wRibbon',null,'#e0483d',1.6);
+  W_('wSkin','#f6cfa6',ink,1.2); W_('wCoatR','#d8453b',ink,1.4); W_('wCoatB','#3f7fd8',ink,1.4); W_('wLeg',null,ink,2);
+  W_('wWire',null,'rgba(43,33,24,.7)',.9); W_('wGlow','#ffd34d',ink,1.1); W_('wLR','#ff4d5e'); W_('wLY','#ffe14d'); W_('wLG','#5be36a'); W_('wLB','#5ab4ff'); W_('wStar','#ffd23a',ink,1.4);
+  const SNOWT=new Map([['roof',4.2],['wall',1.4],['tree',3.6],['tree2',3.6],['pine',3],['bush',2.8],['bushF',2.4],['rock',2.6],['mtn',3.4],['alpR',3],['olive',2.4],['tent',2.4],['troll',2.4],
+    ['wXtree',2.4],['wRoofR',2.6],['wHouse',2],['wGift1',1.6],['wGift2',1.6]]);
+  L.forEach(l=>{ LS_.set('s:'+l[0],l); LSW.set('s:'+l[0],['s:'+l[0],null,null,0]); });
+  ['lmStone','lmStoneD','lmWhite','lmGrey','lmGreyD','lmIron','lmBrick','lmGreen','lmBlue','lmPink','lmYellow','lmOrange','lmWood','lmWoodD','lmRed','lmRock','lmMetal','lmSand'].forEach(k=>SNOWT.set(k,2.8));
   // Flache Dinge werden pro Ebene gesammelt; Gegenstände (Bäume, Berge, Häuser) in Zeichenreihenfolge, damit vordere hintere verdecken
+  // ❄️ Version 155: was im Sommer dort steht, wo im Winter ein Weihnachtsmarkt oder der Schlitten ist (XR), bekommt die Ebene „s:…“ –
+  // im Sommer genau wie vorher gemalt, im Winter weggelassen. So bleibt die Sommerkarte unverändert.
+  const XR=[]; let XRc=null;
   const add=(lay,x,y,d,r)=>{ const o=cur;
+    if(XRc&&!(lay.charCodeAt(0)===119&&lay.charCodeAt(1)<97)){ for(const q of XRc) if(x>q[0]&&x<q[2]&&y>q[1]&&y<q[3]){ if(FLAT.has(lay)){ o.d['s:'+lay]=(o.d['s:'+lay]||'')+d; return; } lay='s:'+lay; break; } }
     if(FLAT.has(lay)) o.d[lay]=(o.d[lay]||'')+d; else { const t=o.ops[o.ops.length-1]; if(t&&t[0]===lay) t[1]+=d; else o.ops.push([lay,d]); } r=r||40; o.b[0]=Math.min(o.b[0],x-r); o.b[1]=Math.min(o.b[1],y-r*1.6); o.b[2]=Math.max(o.b[2],x+r); o.b[3]=Math.max(o.b[3],y+r); };
   const f=v=>v.toFixed(1);
   const ell=(x,y,rx,ry)=>`M${f(x-rx)} ${f(y)}A${f(rx)} ${f(ry)} 0 1 0 ${f(x+rx)} ${f(y)}A${f(rx)} ${f(ry)} 0 1 0 ${f(x-rx)} ${f(y)}Z`;
@@ -1395,7 +1491,11 @@ function buildDecor(){
     const G=(u,v)=>[x+u*c-v*s, y+(u*s+v*c)*S], P=[G(-w,-d),G(w,-d),G(w,d),G(-w,d)];
     add(R()<.6?'field':'field2',x,y,poly(P),Math.hypot(w,d)+8); let fu=''; for(let t=-.66;t<.7;t+=.33){ const p=G(-w*.85,d*t*1.4/1.4), q=G(w*.85,d*t); fu+=`M${f(p[0])} ${f(p[1])}L${f(q[0])} ${f(q[1])}`; } add('furrow',x,y,fu,Math.hypot(w,d)); };
   const village=(x,y)=>{ const n=2+Math.floor(R()*3); for(let i=0;i<n;i++){ const hx=x+(i-(n-1)/2)*22+(R()-.5)*6, hy=y+(R()-.5)*10;
-    add('shadow',hx,hy,ell(hx+3,hy,11,4)); add('wall',hx,hy,poly([[hx-8,hy],[hx-8,hy-12],[hx+8,hy-12],[hx+8,hy]])); add('roof',hx,hy,poly([[hx-11,hy-11],[hx,hy-23],[hx+11,hy-11]])); } };
+    add('shadow',hx,hy,ell(hx+3,hy,11,4)); add('wall',hx,hy,poly([[hx-8,hy],[hx-8,hy-12],[hx+8,hy-12],[hx+8,hy]])); add('roof',hx,hy,poly([[hx-11,hy-11],[hx,hy-23],[hx+11,hy-11]]));
+    add('wGlow',hx,hy,poly([[hx-2.6,hy-2.5],[hx+2.6,hy-2.5],[hx+2.6,hy-7.5],[hx-2.6,hy-7.5]]));   // ❄️ Winter: Fenster leuchten, Lichterkette unter dem Dach
+    add('wWire',hx,hy,`M${f(hx-10)} ${f(hy-10.6)}Q${f(hx-5)} ${f(hy-8.6)} ${f(hx)} ${f(hy-10.6)}Q${f(hx+5)} ${f(hy-8.6)} ${f(hx+10)} ${f(hy-10.6)}`);
+    const dd=['','','',''], o=(i*7+Math.round(hx))&3; for(let k=0;k<6;k++){ const u=-8.5+k*3.4; dd[(k+o)&3]+=ell(hx+u,hy-9.9+(k===1||k===4?.9:0),1.3,1.3); }
+    ['wLR','wLY','wLG','wLB'].forEach((k,j)=>{ if(dd[j]) add(k,hx,hy,dd[j]); }); } };
   const dune=(x,y,w)=>{ const h=w*.45; add('dune',x,y,`M${f(x-w)} ${f(y)}Q${f(x-w*.1)} ${f(y-h*2)} ${f(x+w)} ${f(y)}Z`,w+4); add('duneHi',x,y,`M${f(x-w*.75)} ${f(y-2)}Q${f(x-w*.2)} ${f(y-h*1.5)} ${f(x+w*.1)} ${f(y-h*.6)}Q${f(x-w*.3)} ${f(y-h*.5)} ${f(x-w*.75)} ${f(y-2)}Z`,w); };
   const palm=(x,y,s)=>{ add('shadow',x,y,ell(x+4*s,y,10*s,4*s)); add('trunk',x,y,`M${f(x-2.5*s)} ${f(y)}Q${f(x-2*s)} ${f(y-16*s)} ${f(x+3*s)} ${f(y-30*s)}L${f(x+7*s)} ${f(y-29*s)}Q${f(x+2*s)} ${f(y-16*s)} ${f(x+2.5*s)} ${f(y)}Z`);
     const tx=x+5*s, ty=y-30*s; let d=''; [[-1,-.25],[1,-.25],[-.7,.55],[.75,.55],[0,-1]].forEach(([u,v])=>{ const ex=tx+u*17*s, ey=ty+v*10*s+4*s;
@@ -1565,7 +1665,8 @@ function buildDecor(){
     for(let i=0;i<=n;i++){ const a=i/n*6.283, w=1+.13*Math.sin(a*3+ph)+.07*Math.sin(a*5+ph*2); d+=(i?'L':'M')+f(x+Math.cos(a)*rx*w)+' '+f(y+Math.sin(a)*ry*w); }
     add('lake',x,y,d+'Z',rx+8); add('lakeRim',x,y,ell(x-rx*.25,y-ry*.35,rx*.35,ry*.22),rx);
     add('ripple',x,y,`M${f(x+rx*.1)} ${f(y+ry*.2)}q6 -5 12 0q6 -5 12 0M${f(x-rx*.45)} ${f(y+ry*.35)}q5 -4 10 0`,rx);
-    let rd=''; for(let k=0;k<5;k++){ const a=2.3+k*.22, bx=x+Math.cos(a)*rx*.98, by=y+Math.sin(a)*ry*.98; rd+=`M${f(bx)} ${f(by)}l${f(-2+R()*4)} -9`; } add('reed',x,y,rd,rx); };
+    let rd=''; for(let k=0;k<5;k++){ const a=2.3+k*.22, bx=x+Math.cos(a)*rx*.98, by=y+Math.sin(a)*ry*.98; rd+=`M${f(bx)} ${f(by)}l${f(-2+R()*4)} -9`; } add('reed',x,y,rd,rx);
+    if(rx>40){ skater(x-rx*.25,y+ry*.05,1,'wCoatR'); skater(x+rx*.28,y+ry*.25,-1,'wCoatB'); } };   // ❄️ Winter: auf dem zugefrorenen See wird Schlittschuh gelaufen
   const sheep=(x,y)=>{ const n=3+Math.floor(R()*3); for(let i=0;i<n;i++){ const sx=x+(R()-.5)*44, sy=y+(R()-.5)*16, k=R()<.5?1:-1;
     add('sheep',sx,sy,ell(sx,sy-4,5.5,4),12); add('sheepH',sx,sy,ell(sx+5*k,sy-5,2.2,2)+`M${f(sx-3)} ${f(sy)}h1.6v2h-1.6ZM${f(sx+2)} ${f(sy)}h1.6v2h-1.6Z`,12); } };
   const windmill=(x,y,s)=>{ add('shadow',x,y,ell(x+4*s,y,12*s,4*s));
@@ -1996,6 +2097,64 @@ function buildDecor(){
     [['Chania','Heraklion'],'santorini',.9,52,54],[['Zagreb','Split'],'plitvice',1,56,58],[['Kropywnyzkyj'],'ufo',1,100,66],[['Hamar','Oslo'],'trollberg',1,62,56],
     [[[700,4300]],'kraken',1.1,64,84],[[[5150,1550]],'viking',1.1,66,56],[['Venedig'],'gondel',1,36,46]
   ];
+  // ---- ❄️ Winter (Version 155): Dinge, die nur im Winter zu sehen sind. Sie malen nur auf w…-Ebenen (im Sommer ohne Farbe)
+  // und benutzen nie R(), damit die Sommerkarte genau gleich bleibt. ----
+  const iceW=(x,y)=>y<1500?430:y<2650?430-(y-1500)/1150*380:0;   // so weit reicht das Eis von der Küste ins Meer (Ostsee, Finnischer Meerbusen)
+  const star5=(cx,cy,r)=>poly([...Array(10)].map((_,i)=>{ const a=-Math.PI/2+i*Math.PI/5, q=i%2?r*.45:r; return [cx+Math.cos(a)*q, cy+Math.sin(a)*q]; }));
+  const WK=(x,y,s,rr)=>{ const T=(u,v)=>f(x+u*s)+' '+f(y+v*s);
+    return { P:a=>'M'+a.map(q=>T(q[0],q[1])).join('L')+'Z', E:(u,v,rx,ry)=>ell(x+u*s,y+v*s,rx*s,ry*s), Pa:d=>d.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g,(m,u,v)=>T(+u,+v)),
+      A:(k,d)=>add(k,x,y,d,rr*s) }; };
+  const snowman=(x,y,s)=>{ const {P,E,Pa,A}=WK(x,y,s,40);
+    A('wShadow',E(3,0,11,3.6)); A('wSnow',E(0,-7,9,8)+E(0,-19,6.8,6.2)+E(0,-29,5,4.8));
+    A('wSnowS',crescent(x,y-7*s,9*s,8*s)+crescent(x,y-19*s,6.8*s,6.2*s)+crescent(x,y-29*s,5*s,4.8*s));
+    A('wTwig',Pa('M-6,-20L-14,-26L-16,-29M-11,-24L-14,-24M6,-20L14,-27L15,-30'));
+    A('wLR',P([[-5,-25.5],[5,-25.5],[5,-23.2],[-5,-23.2]])+P([[2,-24],[5,-24],[6.5,-17],[3.2,-17.5]]));
+    A('wCoal',E(-1.8,-30,.95,.95)+E(1.8,-30,.95,.95)+E(0,-19,.9,.9)+E(0,-15.5,.9,.9)+P([[-6,-33],[6,-33],[6,-34.6],[3.8,-34.6],[3.8,-42],[-3.8,-42],[-3.8,-34.6],[-6,-34.6]]));
+    A('wCarrot',P([[.4,-29.4],[8,-28],[.4,-27.3]])); };
+  const xtree=(x,y,s,lit)=>{ const {P,E,Pa,A}=WK(x,y,s,52);
+    A('wShadow',E(3,0,12,4)); A('wWood',P([[-2.4,0],[-2.4,-6],[2.4,-6],[2.4,0]]));
+    A('wXtree',P([[0,-44],[8,-31],[4.5,-31],[11,-19],[6,-19],[14,-5],[-14,-5],[-6,-19],[-11,-19],[-4.5,-31],[-8,-31]]));
+    A('wXtreeS',P([[0,-43],[7,-31.5],[3.5,-31.5],[10,-19.5],[5,-19.5],[13,-6],[1,-6]]));
+    A('wGarl',Pa('M-7,-28Q0,-24 6,-30M-10,-14Q0,-9 11,-16'));
+    const B=[[-4,-35],[4,-27],[-7,-21],[7,-17],[-2,-14],[10,-9],[-10,-9],[3,-8]];
+    ['wLR','wLY','wLB','wLG'].forEach((k,j)=>{ let d=''; B.forEach((q,i)=>{ if(i%4===j) d+=E(q[0],q[1],1.7,1.7); }); A(k,d); });
+    A('wStar',star5(x,y-45*s,4.6*s)); };
+  const reindeer=(x,y,s,k)=>{ k=k||1; const X=u=>f(x+u*s*k), Y=v=>f(y+v*s), A=(l,d)=>add(l,x,y,d,40*s);
+    A('wShadow',ell(x+2*s,y,14*s,3.4*s));
+    A('wDeerL',`M${X(-8)} ${Y(-10)}L${X(-9)} ${Y(0)}M${X(-4)} ${Y(-10)}L${X(-4)} ${Y(0)}M${X(6)} ${Y(-10)}L${X(6.5)} ${Y(0)}M${X(10)} ${Y(-10)}L${X(11)} ${Y(0)}`);
+    A('wDeer',ell(x,y-12*s,12*s,5.6*s)+`M${X(7)} ${Y(-15)}L${X(11)} ${Y(-25)}L${X(16.5)} ${Y(-25)}L${X(18.5)} ${Y(-21.5)}L${X(14)} ${Y(-19.5)}L${X(12)} ${Y(-12)}Z`);
+    A('wDeerB',ell(x-1*s*k,y-9.4*s,7.5*s,2*s)); A('wSnow',ell(x-12*s*k,y-14*s,2.1*s,1.7*s));
+    A('wAntler',`M${X(12.5)} ${Y(-25)}L${X(10.5)} ${Y(-32)}L${X(7.5)} ${Y(-35)}M${X(10.5)} ${Y(-32)}L${X(12.5)} ${Y(-36)}M${X(15)} ${Y(-25)}L${X(18)} ${Y(-32)}L${X(16)} ${Y(-36)}M${X(18)} ${Y(-32)}L${X(21)} ${Y(-34)}`);
+    A('wNose',ell(x+18.6*s*k,y-21.6*s,1.7*s,1.6*s)); A('wCoal',ell(x+14.6*s*k,y-22.4*s,.8*s,.8*s)); };
+  const gifts=(x,y,s)=>{ const {P,Pa,A}=WK(x,y,s,30);
+    A('wShadow',ell(x+2*s,y,13*s,3*s)); A('wGift1',P([[-10,0],[-1,0],[-1,-9],[-10,-9]])); A('wGift2',P([[0,0],[8,0],[8,-7],[0,-7]])+P([[-6,-9],[1,-9],[1,-15],[-6,-15]]));
+    A('wRibbon',Pa('M-5.5,0L-5.5,-9M-10,-4.5L-1,-4.5M4,0L4,-7M-2.5,-9L-2.5,-15M-5,-15Q-4,-18 -2.5,-15Q-1,-18 0,-15')); };
+  const sled=(x,y,s)=>{ const {P,Pa,A}=WK(x,y,s,36);
+    A('wShadow',ell(x+3*s,y,16*s,3.4*s)); A('wRun',Pa('M-15,-1L12,-1Q17,-1 16,-6M-9,-1L-9,-4M7,-1L7,-4'));
+    A('wRoofR',P([[-14,-4],[11,-4],[13,-11],[-14,-11]])); A('wGift1',P([[-11,-11],[-3,-11],[-3,-19],[-11,-19]])); A('wGift2',P([[-2,-11],[6,-11],[6,-17],[-2,-17]]));
+    A('wRibbon',Pa('M-7,-11L-7,-19M-11,-15L-3,-15M2,-11L2,-17')); };
+  const skater=(x,y,k,coat)=>{ const X=u=>f(x+u*k), A=(l,d)=>add(l,x,y,d,24);
+    A('wShadow',ell(x+1,y,6,1.6)); A('wLeg',`M${X(-1)} ${f(y-6)}L${X(-4)} ${f(y-.5)}M${X(1)} ${f(y-6)}L${X(5)} ${f(y-2)}`);
+    A('wLeg',`M${X(-1)} ${f(y-13)}L${X(-7)} ${f(y-15)}M${X(1)} ${f(y-13)}L${X(7)} ${f(y-11)}`);
+    A(coat,`M${X(-3)} ${f(y-5.5)}L${X(-2.4)} ${f(y-15)}L${X(2.6)} ${f(y-15)}L${X(3.4)} ${f(y-5.5)}Z`); A('wSkin',ell(x+.2*k,y-18,2.6,2.6)); A(coat==='wCoatR'?'wCoatB':'wCoatR',ell(x+.2*k,y-20,2.6,1.4)); };
+  const floe=(x,y,s,Wr)=>{ const n=7, ph=Wr()*6; let d='', d2=''; for(let i=0;i<n;i++){ const a=i/n*6.283, w=1+.28*Math.sin(a*2+ph)+.15*Math.sin(a*3+ph*2), px=x+Math.cos(a)*14*s*w, py=y+Math.sin(a)*14*s*w*S*.75;
+      d+=(i?'L':'M')+f(px)+' '+f(py); d2+=(i?'L':'M')+f(px)+' '+f(py+3.4); }
+    add('wFloeS',x,y,d2+'Z',24*s); add('wFloe',x,y,d+'Z',24*s); };
+  const stall=(x,y,s)=>{ const {P,E,Pa,A}=WK(x,y,s,40);
+    A('wShadow',E(3,0,15,3.6)); A('wWood',P([[-12,0],[12,0],[12,-12],[-12,-12]])); A('wCloth',P([[-12,-4],[12,-4],[12,-7],[-12,-7]]));
+    A('wGlow',P([[-9,-7.5],[9,-7.5],[9,-11],[-9,-11]]));
+    A('wRoofR',P([[-15,-11],[15,-11],[10,-21],[-10,-21]])); A('wRoofW',P([[-9,-11.6],[-3,-11.6],[-2,-20.4],[-6.4,-20.4]])+P([[3,-11.6],[9,-11.6],[6.4,-20.4],[2,-20.4]]));
+    A('wWire',Pa('M-15,-11Q-7.5,-8.4 0,-11Q7.5,-8.4 15,-11'));
+    const dd=['','','','']; for(let k=0;k<7;k++){ const u=-13.5+k*4.5; dd[k&3]+=E(u,-10+(k%3===1?1.1:0),1.4,1.4); } ['wLR','wLY','wLG','wLB'].forEach((k,j)=>A(k,dd[j])); };
+  // Weihnachtsmarkt: großer Baum in der Mitte, Buden links und rechts, Geschenke
+  const xmarket=(x,y,s)=>{ xtree(x,y-8*s,1.5*s); stall(x-30*s,y,s); stall(x+30*s,y,s); gifts(x+2*s,y+4*s,.9*s); };
+  // Haus des Weihnachtsmanns ganz im Norden: rotes Holzhaus mit Schneedach, Schlitten und Rentier
+  const santa=(x,y,s)=>{ const {P,E,Pa,A}=WK(x,y,s,90);
+    A('wShadow',E(6,1,40,7)); xtree(x-36*s,y-2*s,1.1*s);
+    A('wHouse',P([[-20,0],[20,0],[20,-20],[-20,-20]])); A('wWood',P([[-4,0],[4,0],[4,-11],[-4,-11]])); A('wGlow',P([[-15,-8],[-8,-8],[-8,-14],[-15,-14]])+P([[8,-8],[15,-8],[15,-14],[8,-14]]));
+    A('wHouse',P([[9,-24],[14,-24],[14,-36],[9,-36]])); A('wSnow',P([[-25,-18],[25,-18],[0,-38]])); A('wSnowS',P([[0,-38],[25,-18],[13,-18],[0,-31]]));
+    A('wWire',Pa('M-24,-18Q-12,-15 0,-18Q12,-15 24,-18')); { const dd=['','','','']; for(let k=0;k<9;k++) dd[k&3]+=E(-22+k*5.5,-16.6+(k%2?.9:0),1.5,1.5); ['wLR','wLY','wLG','wLB'].forEach((k,j)=>A(k,dd[j])); }
+    sled(x+34*s,y+4*s,s); reindeer(x+60*s,y+2*s,.95*s,1); gifts(x-14*s,y+6*s,.8*s); };
   const SEAK=new Set(['mermaid','wasa','gondel','viking','kraken']);
   const LMS=[];
   const fits=(x,y,w,h)=>{ if(!clr(x,y,w,h,14)) return false; for(let v=-14;v<=h;v+=10){ const ww=v<h*.4?w:w*.55; for(let u=-ww;u<=ww+.1;u+=Math.max(8,ww/5)) if(!free(x+u,y-v,v<8?24:18)) return false; } return true; };
@@ -2007,13 +2166,25 @@ function buildDecor(){
         if(fits(x,y,w,h)){ best=[x,y]; break; } }
       if(best){ const [x,y]=best; LMS.push({x,y,s,kind,ci:Math.floor(x/CW),cj:Math.floor(y/CH)}); reserve(x,y-h*.4,w+16,h*.5+14); reserve(x,y,w+20,18); break; } }
   });
+  // ❄️ Version 155: Weihnachtsmärkte neben großen Städten und das Haus des Weihnachtsmanns im Norden (Platz wird wie bei Sehenswürdigkeiten freigehalten)
+  const XMLIST=[['Nürnberg','xmarket'],['Köln','xmarket'],['Dresden','xmarket'],['Straßburg','xmarket'],['Wien','xmarket'],['Prag','xmarket'],['Berlin','xmarket'],['Hamburg','xmarket'],
+    ['Kopenhagen','xmarket'],['Stockholm','xmarket'],['Brüssel','xmarket'],['Zürich','xmarket'],['Salzburg','xmarket'],['Krakau','xmarket'],['Budapest','xmarket'],['Tallinn','xmarket'],
+    ['Frankfurt','xmarket'],['Leipzig','xmarket'],['Lille','xmarket'],['Breslau','xmarket'],['Erfurt','xmarket'],['Lyon','xmarket'],['London','xmarket'],['Amsterdam','xmarket'],
+    ['Warschau','xmarket'],['Ljubljana','xmarket'],['Zagreb','xmarket'],['Bozen','xmarket'],['Riga','xmarket'],['Oslo','xmarket'],['Danzig','xmarket'],['Lahti','santa']];
+  const WLMD={xmarket, santa};
+  XMLIST.forEach(([n,kind],li)=>{ const c=C(n); if(!c) return; const w=kind==='santa'?70:48, h=52;
+    for(const s of kind==='santa'?[1.5,1.3,1.1]:[1,.85]){ let best=null;
+      for(let rad=90;rad<=420&&!best;rad+=18) for(let k=0;k<24;k++){ const a=k/24*6.283+li*.7, x=c.x+Math.cos(a)*rad, y=c.y+Math.sin(a)*rad*S;
+        if(!landAll(x,y,w*s*.7)||isAfr(x,y)) continue; if(fits(x,y,w*s,h*s)){ best=[x,y]; break; } }
+      if(best){ const [x,y]=best; LMS.push({x,y,s,kind,w:1,ci:Math.floor(x/CW),cj:Math.floor(y/CH)}); XR.push([x-w*s-34,y-80*s-26,x+w*s+34,y+26]); break; } } });
   const MILLC=["Amsterdam","Utrecht","Groningen","Eindhoven","Gent","Aarhus","Aalborg","Esbjerg","Oldenburg","Bremen","Lille","Kiel"].map(C).filter(Boolean), nearMill=(x,y)=>MILLC.some(c=>Math.hypot(c.x-x,(c.y-y)/S)<280);
   const vineY=(C("Lyon")||{y:4400}).y-120;
   const G=34, GY=G*S;
   function genCell(ci,cj){
     const k=ci+','+cj; let o=cells.get(k); if(o) return o;
     cells.set(k,o={id:k,ci,cj,d:{},ops:[],b:[1e9,1e9,-1e9,-1e9]}); cur=o; R=seeded(1995+ci*7919+cj*104729);
-    const items=[], X0=ci*CW, Y0=cj*CH;
+    XRc=XR.filter(q=>q[0]<(ci+1)*CW+200&&q[2]>ci*CW-200&&q[1]<(cj+1)*CH+200&&q[3]>cj*CH-200); if(!XRc.length) XRc=null;
+    const items=[], X0=ci*CW, Y0=cj*CH, SP=[];   // SP: Rasterpunkte, auf denen im Sommer nichts steht (für Winter-Dinge)
     for(let j=Math.ceil(Y0/GY);j*GY<Y0+CH;j++) for(let i=Math.ceil(X0/G);i*G<X0+CW;i++){
       const x=i*G, y=j*GY, px=x+(R()-.5)*G*.9, py=y+(R()-.5)*GY*.9, r=R();
       if(!isLand(px,py)){
@@ -2028,6 +2199,7 @@ function buildDecor(){
         else if(r>=.9918&&r<.9935&&seaAll(px,py,40)&&!seaAll(px,py,220)&&free(px,py,40)&&clr(px,py,24,26,6)) items.push([py,()=>rowboat(px,py)]);
         else if(r>=.9935&&r<.99358&&seaAll(px,py,80)&&free(px,py,60)&&clr(px,py,44,32,6)) items.push([py,()=>serpent(px,py)]);
         else if(r>.99905&&r<.9994&&seaAll(px,py,140)&&free(px,py,110)&&clr(px,py,46,42,6)) items.push([py,()=>whale(px,py)]);
+        else SP.push(px,py,1);
         continue;
       }
       if(isAfr(px,py)){
@@ -2086,7 +2258,18 @@ function buildDecor(){
       else if(r>.918&&r<=.922&&norway&&free(px,py,40)&&clr(px,py,24,44,6)&&landAll(px,py,30)) items.push([py,()=>troll(px,py,1.05)]);
       else if(r>.96&&free(px,py,26)&&clr(px,py,12,30,5)) items.push([py,()=>tree(px,py,.7+R()*.3)]);
       else if(r>.945&&free(px,py,22)&&clr(px,py,14,17,4)) items.push([py,()=>bush(px,py,.7+R()*.35)]);
+      else SP.push(px,py,0);
     }
+    // ❄️ Version 155: Winter-Dinge auf freien Punkten – eigener Zufall Wr (nie R), damit der Sommer unverändert bleibt
+    { const Wr=seeded(7331+ci*7919+cj*104729);
+      for(let q=0;q<SP.length;q+=3){ const px=SP[q], py=SP[q+1], w=Wr(); if(XRc&&XRc.some(r=>px>r[0]-20&&px<r[2]+20&&py>r[1]-20&&py<r[3]+30)) continue;
+        if(SP[q+2]){ const iw=iceW(px,py); if(iw>0&&w<.11&&seaAll(px,py,Math.max(24,iw*.75))&&!seaAll(px,py,iw+90)&&clr(px,py,24,12,4)) items.push([py,()=>floe(px,py,.7+Wr()*.8,Wr)]); continue; }
+        if(isAfr(px,py)) continue;
+        if(w<.0045&&free(px,py,26)&&clr(px,py,17,44,5)) items.push([py,()=>snowman(px,py,.95+Wr()*.25)]);
+        else if(w<.0085&&free(px,py,28)&&clr(px,py,16,50,5)) items.push([py,()=>{ xtree(px,py,.9+Wr()*.3); if(Wr()<.5) gifts(px+14,py+3,.7); }]);
+        else if(w<.0105&&py<3300&&free(px,py,34)&&clr(px,py,24,38,5)) items.push([py,()=>reindeer(px,py,1,Wr()<.5?1:-1)]);
+        else if(w<.0118&&free(px,py,30)&&clr(px,py,20,20,5)) items.push([py,()=>sled(px,py,1)]);
+        else if(w<.07&&free(px,py,20)&&clr(px,py,20,6,4)){ const rx=10+Wr()*14; add('wDriftS',px,py,ell(px+2,py+1.5,rx,rx*.34),rx); add('wDrift',px,py,ell(px-1,py-.8,rx*.82,rx*.26),rx); } } }
     // Helle und dunkle Wiesenflecken (ganz flach, unter allem)
     for(let i=0;i<2;i++){ const x=X0+R()*CW, y=Y0+R()*CH, rx=50+R()*120;
       if(R()<.6&&!isAfr(x,y)&&landAll(x,y,rx*1.05)) add(R()<.6?'meadow':'meadow2',x,y,ell(x,y,rx,rx*S*(.7+R()*.4)),rx); }
@@ -2094,7 +2277,7 @@ function buildDecor(){
     for(let i=0;i<26;i++){ const x=X0+R()*CW, y=Y0+R()*CH, t=R(); if(!isLand(x,y)||isAfr(x,y)||mtnAt(x,y)>.12||!free(x,y,15)||!clr(x,y,14,8,6)) continue;
       if(t<.7) add('tuft',x,y,`M${f(x-4.5)} ${f(y)}l1 -6l2.5 5l1 -7.5l1.5 7l2.5 -5.5l1 7Z`,10);
       else { let d=''; for(let k=0;k<6;k++){ const fx=x+(R()-.5)*26, fy=y+(R()-.5)*10; d+=`M${f(fx-2.6)} ${f(fy)}l2.6 -2.2l2.6 2.2l-2.6 2.2Z`; } add(['flowerR','flowerY','flowerW'][Math.floor(R()*3)],x,y,d,18); } }
-    LMS.forEach(l=>{ if(l.ci===ci&&l.cj===cj) items.push([l.y,()=>LMD[l.kind](l.x,l.y,l.s)]); });   // Sehenswürdigkeiten
+    LMS.forEach(l=>{ if(l.ci===ci&&l.cj===cj) items.push([l.y,()=>(l.w?WLMD:LMD)[l.kind](l.x,l.y,l.s)]); });   // Sehenswürdigkeiten
     items.sort((a,b)=>a[0]-b[0]).forEach(it=>it[1]());
     return o;
   }
@@ -2105,7 +2288,7 @@ function buildDecor(){
   const ch=(R,dy,pad)=>ringChunks(R,dy,pad).map(c=>({b:c.b,d:c.d}));
   const LS=RL.concat(RA);
   const each=(R,dy)=>R.map(r=>ringsD([r],dy));   // jeder Ring einzeln gefüllt (verdrehte Küstenstücke ergeben sonst Löcher)
-  const fields=()=>{
+  const fields=(win)=>{   // win: Winterfarben (Version 155)
   // ---- Farbfelder (Version 114): Land wie mit Wasserfarbe – Norden sattgrün, Süden olivgelb, Steppe, trockenes Inland,
   // braune Gebirge, Sahara sandig; Meer an der Küste türkis und draußen tiefblau. Kleine Bilder, beim Malen hochskaliert. ----
   const FS=34, fw=Math.ceil(GEO.W/FS)+1, fh=Math.ceil(GEO.H/FS)+1, FN=fw*fh, kd=new Uint8Array(FN);
@@ -2115,7 +2298,7 @@ function buildDecor(){
   const cN=hx('#7cba55'), cM=hx('#9fd463'), cS=hx('#cbd56c'), cDry=hx('#e0c97c'), cSt=hx('#cfdc6e'), cMt=hx('#bba878'), cYel=hx('#dde27a'), cAlp=hx('#a99f8c'), cAlpS=hx('#e8eef3'), cAf=hx('#f1d088'), cAf2=hx('#e7b46a'), cAfM=hx('#cf9c60');
   const landCol=(x,y,af)=>{ const m=mtnAt(x,y), n1=nz(x,y,.0011,.0008), n2=nz(x+3000,y-900,.0024,.0018);
     let c;
-    if(af){ c=mx(cAf,cAf2,cl(.5+n1*1.4)); c=mx(c,cAfM,cl(m*.9)); return c.map(v=>v*(1+n2*.05)); }
+    if(af){ c=mx(cAf,cAf2,cl(.5+n1*1.4)); c=mx(c,cAfM,cl(m*.9)); c=c.map(v=>v*(1+n2*.05)); return win?mx(c,[246,249,252],cl((m-.32)*2.6)*.95):c; }
     const t=cl((y-1100)/4700); c=t<.42?mx(cN,cM,t/.42):mx(cM,cS,(t-.42)/.58);
     c=mx(c,cSt,cl((x-9500)/900)*cl(1-Math.abs(y-3700)/900)*.8);
     c=mx(c,cDry,Math.max(gau(x,y,2600,5250,900,420),gau(x,y,12100,5300,1300,500))*.75);
@@ -2126,6 +2309,11 @@ function buildDecor(){
     const hg=(u,w)=>nz(u,w,.0019,.0016)+.55*nz(u+500,w+700,.0042,.0036)+mtnAt(u,w)*1.3;
     const shd=Math.max(-.14,Math.min(.14,(hg(x-70,y-70)-hg(x+70,y+70))*1.5));
     const gy=(c[0]+c[1]+c[2])/3; c=c.map(v=>gy+(v-gy)*1.12);
+    if(win){ const sh=shd, al=alpsAt(x,y);
+      // ❄️ Winter: der Boden darunter matt und kühl, darüber Schnee – im Norden ganz, im Süden nur noch fleckig, in Afrika nur auf dem Atlas
+      const g0=(c[0]+c[1]+c[2])/3, gr=c.map(v=>g0+(v-g0)*.5).map((v,i)=>v*(1+n1*.07)*(1+shd)*[.9,.93,1][i]);
+      const sn=cl(1.08-(y-4300)/1100+n2*1.1+mtnAt(x,y)*1.3+al*2), snow=sh<0?mx([249,251,255],[206,221,243],cl(-sh*3.6)):mx([249,251,255],[255,255,255],cl(sh*6));
+      return mx(gr,snow.map(v=>v*(1+n1*.02)),sn*sn*(3-2*sn)); }
     return c.map(v=>v*(1+n1*.07)*(1+shd)); };
   // nächstes Land/Meer per Breitensuche: Entfernung zur Küste (Meeresfarbe) und Landfarbe auch etwas ins Meer hinein (weicher Rand)
   const dist=new Float32Array(FN).fill(1e9), src=new Int32Array(FN).fill(-1), qu=new Int32Array(FN); let qh=0, qt=0;
@@ -2136,13 +2324,14 @@ function buildDecor(){
       if(!kd[q]&&dist[q]>nd+.01){ if(dist[q]===1e9) qu[qt++]=q; dist[q]=nd; src[q]=src[k]; } } }
   const mkc=()=>{ const c=document.createElement('canvas'); c.width=fw; c.height=fh; return c; };
   const LC=mkc(), SC=mkc(), lg=LC.getContext('2d',{willReadFrequently:true}), sg=SC.getContext('2d',{willReadFrequently:true}), LI=lg.createImageData(fw,fh), SI=sg.createImageData(fw,fh);
-  const sea0=hx('#74cfe9'), sea1=hx('#3e9ddf'), sea2=hx('#2c7fc8');
+  const sea0=hx(win?'#80c4e0':'#74cfe9'), sea1=hx(win?'#3a8acb':'#3e9ddf'), sea2=hx(win?'#296aae':'#2c7fc8'), iceC=[228,242,251];
   const LD=LI.data, SD=SI.data;
   for(let k=0;k<FN;k++) if(kd[k]){ const i=k%fw, j=(k-i)/fw, c=landCol((i+.5)*FS,(j+.5)*FS,kd[k]===2), o=k*4; LD[o]=c[0]; LD[o+1]=c[1]; LD[o+2]=c[2]; LD[o+3]=255; }
   for(let k=0;k<FN;k++){ const i=k%fw, j=(k-i)/fw, x=(i+.5)*FS, y=(j+.5)*FS, o=k*4;
     if(!kd[k]){ const p=src[k]*4; if(p>=0){ LD[o]=LD[p]; LD[o+1]=LD[p+1]; LD[o+2]=LD[p+2]; } LD[o+3]=255; }
     const d=kd[k]?0:dist[k]*FS, n=1+nz(x,y,.0016,.0012)*.045, t=d<700?Math.pow(d/700,.7):cl((d-700)/1600), A=d<700?sea0:sea1, B=d<700?sea1:sea2;
-    SD[o]=(A[0]+(B[0]-A[0])*t)*n; SD[o+1]=(A[1]+(B[1]-A[1])*t)*n; SD[o+2]=(A[2]+(B[2]-A[2])*t)*n; SD[o+3]=255; }
+    SD[o]=(A[0]+(B[0]-A[0])*t)*n; SD[o+1]=(A[1]+(B[1]-A[1])*t)*n; SD[o+2]=(A[2]+(B[2]-A[2])*t)*n; SD[o+3]=255;
+    if(win){ const iw=iceW(x,y)*(1+nz(x,y,.0031,.0026)*.55), ic=cl((iw-d)/150); if(ic>0){ const e=1+nz(x+900,y,.006,.005)*.03; for(let q=0;q<3;q++) SD[o+q]=SD[o+q]+(iceC[q]*e-SD[o+q])*ic; } } }
   lg.putImageData(LI,0,0); sg.putImageData(SI,0,0);
   return {LC,SC,FS}; };
   // Papier-Körnung: weiche helle und dunkle Wolken, nahtlos wiederholt
@@ -2155,16 +2344,17 @@ function buildDecor(){
       if(x-w<160||y-h<160||!seaAll(x,y-h/2,w)||!seaAll(x,y-h,w*.8)||!clr(x,y,w,h,10)) continue; return [x,y]; } return null; };
   { const p=seaSpot(1250,980,560,300); if(p) DECO.push({k:'title',x:p[0],y:p[1],b:[p[0]-600,p[1]-330,p[0]+600,p[1]+30]}); }
   { const p=seaSpot(1150,2250,170,260); if(p) DECO.push({k:'compass',x:p[0],y:p[1]-130,b:[p[0]-200,p[1]-320,p[0]+200,p[1]+40]}); }
+  { const p=seaSpot(4600,1250,300,190); if(p){ DECO.push({k:'sleigh',w:1,x:p[0],y:p[1],b:[p[0]-440,p[1]-250,p[0]+380,p[1]+40]}); XR.push([p[0]-430,p[1]-250,p[0]+370,p[1]+50]); } }   // im Winter verschwinden Schiffe unter dem Schlitten   // ❄️ Version 155: der Weihnachtsmann fliegt übers Meer
   DECOR={L, cellsIn, RIVERS, MOUTHS, BRIDGES, NAMES, DECO, PC, fields, CW, CH, land:each(RL), africa:each(RA), seas, cliffL:each(RL,26), cliffA:each(RA,26),
     shallow:ch(LS,0,50), foam:ch(LS,0,30), wring:ch(LS,0,112), cliffO:ch(LS,26,6), landO:ch(LS,0,6), seasO:ch(RS,0,6),
-    borders:GEO.borders, FLAT, LS:LS_, LMS, gen:genCell, isLand};
+    borders:GEO.borders, FLAT, LS:LS_, LSW, SNOWT, LMS, XMS:LMS.filter(l=>l.w), gen:genCell, isLand};
   return DECOR;
 }
 
 // ---- Bildkarten-Stil (Version 114): Muster für Land/Meer/Papier, Flüsse, Namen, Titelband, Kompass, Rahmen ----
-function bgPats(){ const D=DECOR; if(D.pat) return D.pat; const g=document.createElement('canvas').getContext('2d');
+function bgPats(w){ const D=DECOR; if(w===undefined) w=WINTER; const key=w?'patW':'pat'; if(D[key]) return D[key]; const g=document.createElement('canvas').getContext('2d');
   const mk=(c,s)=>{ const p=g.createPattern(c,'repeat'); p.setTransform(new DOMMatrix([s,0,0,s,0,0])); return p; };
-  const F=D.fields(); return D.pat={land:mk(F.LC,F.FS), sea:mk(F.SC,F.FS), paper:mk(D.PC,3.2), src:[F.LC,F.SC]}; }
+  const F=D.fields(w); return D[key]={land:mk(F.LC,F.FS), sea:mk(F.SC,F.FS), paper:mk(D.PC,3.2), src:[F.LC,F.SC]}; }   // Version 155: eigene Muster für den Winter
 // Version 141 (Flo, Handyfotos): auf dem Handy war der Boden plötzlich schwarz (nur Bäume und Waldflächen zu sehen).
 // Ursache: Android wirft unter Speicherdruck Leinwand-Inhalte weg – dann malen die Land-/Meer-Muster nichts mehr und die
 // Kacheln (ohne Durchsicht) bleiben schwarz. Die Muster-Leinwände liegen jetzt im normalen Speicher (willReadFrequently),
@@ -2172,26 +2362,29 @@ function bgPats(){ const D=DECOR; if(D.pat) return D.pat; const g=document.creat
 function bgEmpty(c){ try{ if(!c||!c.width) return false; const g=c.getContext('2d'); if(g.isContextLost&&g.isContextLost()) return true;
   return g.getImageData(c.width>>1,c.height>>1,1,1).data[3]===0; }catch(e){ return false; } }
 function bgHeal(tiles){
-  const D=DECOR; if(!D||!D.pat) return;
-  let bad=bgEmpty(D.pat.src&&D.pat.src[0])||bgEmpty(D.pat.src&&D.pat.src[1]);
+  const D=DECOR, P=D&&(WINTER?D.patW:D.pat); if(!P) return;
+  let bad=bgEmpty(P.src&&P.src[0])||bgEmpty(P.src&&P.src[1]);
   if(!bad&&tiles){ for(const t of BG.tiles.values()) if(bgEmpty(t.c)){ bad=true; break; } if(!bad&&BG.over&&bgEmpty(BG.over.c)) bad=true; }
   if(!bad) return;
   console.warn('Rallye: Kartenboden war leer – wird neu gemalt');
-  D.pat=null; BG.P.clear(); for(const t of BG.tiles.values()) t.c.width=t.c.height=0; BG.tiles.clear(); BG.job=null; BG.queue=[]; BG.over=null; BG.pend=false;
+  D.pat=D.patW=null; BG.P.clear(); for(const t of BG.tiles.values()) t.c.width=t.c.height=0; BG.tiles.clear(); BG.job=null; BG.queue=[]; BG.over=null; BG.pend=false;
   try{ bgDraw(); }catch(e){ console.warn(e); }
 }
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) setTimeout(()=>bgHeal(true),300); });
 setInterval(()=>{ if(!document.hidden) bgHeal(false); },4000);
-function bgRivers(ctx,hit){ const R=DECOR.RIVERS;
+// ❄️ Version 155: im Winter sind die Flüsse zugefroren (hellblaues Eis mit weißem Glanz)
+const RIVC=()=>WINTER?{bank:'rgba(60,90,150,.16)',w:'#78b9e2',mid:'rgba(186,224,247,.95)',hi:'rgba(255,255,255,.95)',sea:'rgba(159,207,234,.25)',sand:'#eef4fa'}
+  :{bank:'rgba(40,90,40,.22)',w:'#4ea8e4',mid:'rgba(120,200,245,.9)',hi:'rgba(235,250,255,.75)',sea:'rgba(78,168,228,.2)',sand:'#f1dc9e'};
+function bgRivers(ctx,hit){ const R=DECOR.RIVERS, RC=RIVC();
   // Version 145: grünlich-dunkles Ufer, Tintenrand, Wasser, heller Glanz in der Mitte
-  ctx.strokeStyle='rgba(40,90,40,.22)'; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w+11; ctx.stroke(bgPath('rv'+i,r.d)); } });
+  ctx.strokeStyle=RC.bank; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w+11; ctx.stroke(bgPath('rv'+i,r.d)); } });
   ctx.strokeStyle=MAPC.ink; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w+3.4; ctx.stroke(bgPath('rv'+i,r.d)); } });
-  ctx.strokeStyle='#4ea8e4'; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w; ctx.stroke(bgPath('rv'+i,r.d)); } });
-  ctx.strokeStyle='rgba(120,200,245,.9)'; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w*.55; ctx.stroke(bgPath('rv'+i,r.d)); } });
-  ctx.strokeStyle='rgba(235,250,255,.75)'; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=Math.max(1,r.w*.18); ctx.stroke(bgPath('rv'+i,r.d)); } });
+  ctx.strokeStyle=RC.w; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w; ctx.stroke(bgPath('rv'+i,r.d)); } });
+  ctx.strokeStyle=RC.mid; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=r.w*.55; ctx.stroke(bgPath('rv'+i,r.d)); } });
+  ctx.strokeStyle=RC.hi; R.forEach((r,i)=>{ if(hit(r.b)){ ctx.lineWidth=Math.max(1,r.w*.18); ctx.stroke(bgPath('rv'+i,r.d)); } });
   bgMouths(ctx,hit); }
 // Version 150: Mündungstrichter (Breite wächst zur Küste hin), Tinte endet an der Küste, Wasser läuft ins Meer aus
-function bgMouths(ctx,hit){ const ink=MAPC.ink, M=DECOR.MOUTHS.filter(m=>hit(m.b)); if(!M.length) return;
+function bgMouths(ctx,hit){ const ink=MAPC.ink, M=DECOR.MOUTHS.filter(m=>hit(m.b)), RC=RIVC(); if(!M.length) return;
   ctx.save(); ctx.lineJoin='round';
   const wid=(m,i)=>{ const t=Math.min(1,i/m.kk); return m.w+(m.W-m.w)*t*t; };
   const line=(A)=>{ ctx.beginPath(); A.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); };
@@ -2199,18 +2392,18 @@ function bgMouths(ctx,hit){ const ink=MAPC.ink, M=DECOR.MOUTHS.filter(m=>hit(m.b
     for(let i=0;i<n;i++){ const a=T[Math.max(0,i-1)], b=T[Math.min(n-1,i+1)]; let dx=b[0]-a[0], dy=b[1]-a[1]; const l=Math.hypot(dx,dy)||1, h=wid(m,i)/2;
       m.L.push([T[i][0]-dy/l*h, T[i][1]+dx/l*h]); m.R.push([T[i][0]+dy/l*h, T[i][1]-dx/l*h]); } }
   // Ufer-Schatten und Tinte nur bis zur Küste, dann die Wasserfläche des Trichters (läuft ein Stück ins Meer)
-  ctx.lineCap='round'; ctx.strokeStyle='rgba(40,90,40,.22)'; ctx.lineWidth=11; for(const m of M) for(const A of [m.L,m.R]){ line(A.slice(0,m.kk)); ctx.stroke(); }
+  ctx.lineCap='round'; ctx.strokeStyle=RC.bank; ctx.lineWidth=11; for(const m of M) for(const A of [m.L,m.R]){ line(A.slice(0,m.kk)); ctx.stroke(); }
   ctx.strokeStyle=ink; ctx.lineWidth=3.4; for(const m of M) for(const A of [m.L,m.R]){ line(A.slice(0,m.kk+1)); ctx.stroke(); }
   for(const m of M){ const e=[m.x,m.y], ang=Math.atan2(m.dy,m.dx), dn=m.dy>-.2;
-    ctx.fillStyle='#4ea8e4'; line(m.L.concat(m.R.slice().reverse())); ctx.closePath(); ctx.fill();
+    ctx.fillStyle=RC.w; line(m.L.concat(m.R.slice().reverse())); ctx.closePath(); ctx.fill();
     if(dn){ ctx.beginPath(); ctx.ellipse(e[0]+m.dx*4,e[1]+12,m.W*.5,14,0,0,6.283); ctx.fill(); }   // Klippe nach unten aufschneiden
-    ctx.fillStyle='rgba(78,168,228,.2)'; for(let k=0;k<4;k++){ const t=10+k*13; ctx.beginPath(); ctx.ellipse(e[0]+m.dx*t,e[1]+m.dy*t+(dn?10:0),m.W*(.5+k*.16)+4,m.W*(.35+k*.1)+3,ang+Math.PI/2,0,6.283); ctx.fill(); } }
-  ctx.strokeStyle='rgba(120,200,245,.9)'; for(const m of M){ line(m.tail.slice(0,m.kk+2)); ctx.lineWidth=m.w*.55; ctx.stroke(); }
-  ctx.strokeStyle='rgba(235,250,255,.6)'; for(const m of M){ line(m.tail.slice(0,m.kk+2)); ctx.lineWidth=Math.max(1,m.w*.18); ctx.stroke(); }
+    ctx.fillStyle=RC.sea; for(let k=0;k<4;k++){ const t=10+k*13; ctx.beginPath(); ctx.ellipse(e[0]+m.dx*t,e[1]+m.dy*t+(dn?10:0),m.W*(.5+k*.16)+4,m.W*(.35+k*.1)+3,ang+Math.PI/2,0,6.283); ctx.fill(); } }
+  ctx.strokeStyle=RC.mid; for(const m of M){ line(m.tail.slice(0,m.kk+2)); ctx.lineWidth=m.w*.55; ctx.stroke(); }
+  ctx.strokeStyle=RC.hi; for(const m of M){ line(m.tail.slice(0,m.kk+2)); ctx.lineWidth=Math.max(1,m.w*.18); ctx.stroke(); }
   // Sandbänke links und rechts der Öffnung, zwei kleine Wellen davor
   for(const m of M){ const nx=-m.dy, ny=m.dx, ang=Math.atan2(m.dy,m.dx);
     for(const sd of [-1,1]){ const x=m.x+m.dx*10+nx*sd*(m.W*.62+4), y=m.y+m.dy*10+ny*sd*(m.W*.62+4)+(m.dy>-.2?8:0); ctx.beginPath(); ctx.ellipse(x,y,m.W*.26+4,3.2+m.W*.05,ang,0,6.283);
-      ctx.fillStyle='#f1dc9e'; ctx.fill(); ctx.lineWidth=1.8; ctx.strokeStyle=ink; ctx.stroke(); }
+      ctx.fillStyle=RC.sand; ctx.fill(); ctx.lineWidth=1.8; ctx.strokeStyle=ink; ctx.stroke(); }
     ctx.strokeStyle='rgba(235,250,255,.8)'; ctx.lineWidth=2; ctx.lineCap='round'; const oy=m.dy>-.2?12:0;
     for(const t of [40,58]){ const cx=m.x+m.dx*t, cy=m.y+m.dy*t+oy, h=m.W*.3; ctx.beginPath(); ctx.moveTo(cx+nx*h,cy+ny*h); ctx.quadraticCurveTo(cx-m.dx*6,cy-m.dy*6,cx-nx*h,cy-ny*h); ctx.stroke(); } }
   ctx.restore(); }
@@ -2231,6 +2424,40 @@ function bgTitle(g,o){ const ink=MAPC.ink; g.save(); g.translate(o.x,o.y-150); g
   g.textAlign='left'; g.textBaseline='alphabetic';
   g.font=`900 118px ${MAPFONT}`; g.fillStyle='#d8453b'; g.strokeStyle=ink; g.lineWidth=10; bgSpaced(g,'EUROPA',0,-6,14,true);
   g.font=`800 34px ${MAPFONT}`; g.fillStyle=ink; bgSpaced(g,'DIE TOTAL BEKLOPPTE RALLYE',0,34,5,false);
+  if(WINTER){   // ❄️ Version 155: Schnee auf dem Band, Eiszapfen und „Frohe Weihnachten“
+    const B=(t,a,b)=>(1-t)*(1-t)*a+2*t*(1-t)*b+t*t*a, top=new Path2D('M-448,-98Q0,-150 448,-98');
+    const bumps=[]; for(let k=0;k<=9;k++){ const t=k/9, u=-440+t*880; bumps.push([u,B(t,-100,-150)-4,26+((k*37)%13),9+((k*11)%5)]); }
+    g.strokeStyle=ink; g.lineWidth=24; g.stroke(top); g.fillStyle=ink; bumps.forEach(([u,v,rx,ry])=>{ g.beginPath(); g.ellipse(u,v,rx+3.5,ry+3.5,0,0,6.283); g.fill(); });
+    g.strokeStyle='#f7fbff'; g.lineWidth=17; g.stroke(top); g.fillStyle='#f7fbff'; bumps.forEach(([u,v,rx,ry])=>{ g.beginPath(); g.ellipse(u,v,rx,ry,0,0,6.283); g.fill(); });
+    g.fillStyle='rgba(120,150,205,.35)'; bumps.forEach(([u,v,rx,ry])=>{ g.beginPath(); g.ellipse(u+4,v+3,rx*.7,ry*.45,0,0,6.283); g.fill(); });
+    g.lineWidth=2; g.strokeStyle=ink; g.fillStyle='#d6eefa';
+    for(let k=1;k<26;k++){ const t=k/26, u=-440+t*880, v=B(t,70,20)-1, L=10+((k*53)%17); g.beginPath(); g.moveTo(u-4.5,v); g.lineTo(u,v+L); g.lineTo(u+4.5,v); g.closePath(); g.fill(); g.stroke(); }
+    g.font=`900 44px ${MAPFONT}`; g.fillStyle='#2f8a3e'; g.strokeStyle='#fbf6ea'; g.lineWidth=9; bgSpaced(g,'❄ FROHE WEIHNACHTEN ❄',0,128,4,true); }
+  g.restore(); }
+// ❄️ Version 155: der Weihnachtsmann mit Schlitten und Rentieren fliegt über das Nordmeer (nur im Winter)
+function bgSleigh(g,o){ const ink=MAPC.ink; g.save(); g.translate(o.x,o.y-90); g.scale(1.35,1.35); g.lineJoin='round'; g.lineCap='round';
+  const E=(x,y,rx,ry,c,st)=>{ g.beginPath(); g.ellipse(x,y,rx,ry,0,0,6.283); g.fillStyle=c; g.fill(); if(st!==0){ g.lineWidth=st||2.4; g.strokeStyle=ink; g.stroke(); } };
+  const Pl=(a,c,st)=>{ g.beginPath(); a.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1])); g.closePath(); g.fillStyle=c; g.fill(); if(st!==0){ g.lineWidth=st||2.4; g.strokeStyle=ink; g.stroke(); } };
+  // Sternenstaub-Spur
+  for(let i=0;i<34;i++){ const t=i/33, x=-300+t*200, y=60-t*50+Math.sin(t*9)*10, r=1.5+((i*7)%5)*.6; g.fillStyle=i%3?'rgba(255,226,120,.85)':'rgba(255,255,255,.9)'; g.beginPath(); g.arc(x,y,r,0,6.283); g.fill(); }
+    // Zügel
+  g.strokeStyle='#8a5a2b'; g.lineWidth=2.4; g.beginPath(); g.moveTo(-40,-6); g.quadraticCurveTo(40,-26,190,-46); g.moveTo(-40,-2); g.quadraticCurveTo(60,-12,120,-34); g.stroke();
+  // Rentiere (vorne Rudolph mit roter Nase)
+  const deer=(x,y,s,lead)=>{ g.save(); g.translate(x,y); g.scale(s,s);
+    g.strokeStyle='#5b3b25'; g.lineWidth=3; g.beginPath(); g.moveTo(-10,4); g.lineTo(-20,10); g.lineTo(-24,6); g.moveTo(-6,5); g.lineTo(-12,14); g.moveTo(10,4); g.lineTo(20,8); g.lineTo(24,3); g.moveTo(6,5); g.lineTo(14,13); g.stroke();
+    E(0,0,15,7,'#9a6a3e'); Pl([[9,-4],[15,-17],[22,-18],[25,-13],[19,-10],[14,2]],'#9a6a3e'); E(-1,2.6,9,2.4,'#ecd9b6',0); E(-15,-3,3,2.4,'#fbfdff',1.6);
+    g.strokeStyle='#e8d3a3'; g.lineWidth=2.6; g.beginPath(); g.moveTo(16,-17); g.lineTo(13,-26); g.lineTo(9,-30); g.moveTo(13,-26); g.lineTo(16,-31); g.moveTo(19,-17); g.lineTo(23,-26); g.lineTo(21,-31); g.moveTo(23,-26); g.lineTo(27,-28); g.stroke();
+    E(19.5,-14.5,1.1,1.1,ink,0); E(25.5,-13.5,lead?3:2,lead?2.8:1.8,lead?'#ff3b30':'#2b2118',lead?1.6:0);
+    g.fillStyle='#d8453b'; g.beginPath(); g.rect(6,-6,4,9); g.fill(); g.restore(); };
+  deer(70,-28,1,false); deer(130,-40,1,false); deer(195,-52,1.05,true);
+  // Schlitten mit Geschenkesack und Weihnachtsmann
+  Pl([[-46,-14],[-46,-38],[-90,-30],[-96,0],[-40,10],[-14,8],[-6,-14]],'#4b2e1e');
+  E(-70,-40,22,20,'#8a5a33'); Pl([[-80,-56],[-70,-52],[-62,-60],[-68,-66]],'#3f9a4e',1.8); Pl([[-60,-52],[-52,-50],[-50,-62],[-58,-64]],'#f2c230',1.8);
+  E(-30,-34,13,15,'#d8453b'); E(-30,-50,8,8,'#f6cfa6',1.8); Pl([[-38,-54],[-22,-54],[-14,-70],[-30,-64]],'#d8453b',1.8); E(-13,-70,3.4,3.4,'#ffffff',1.6); E(-30,-53,12,3,'#ffffff',1.8);
+  Pl([[-37,-48],[-23,-48],[-25,-36],[-30,-32],[-35,-36]],'#ffffff',1.8);
+  Pl([[-104,-6],[-100,-36],[-50,-22],[-10,-24],[8,-8],[-6,10],[-60,12]],'#d8453b',3);
+  g.strokeStyle='#f6c432'; g.lineWidth=3.2; g.beginPath(); g.moveTo(-96,-4); g.quadraticCurveTo(-50,4,-4,-6); g.stroke();
+  g.strokeStyle=ink; g.lineWidth=3.4; g.beginPath(); g.moveTo(-106,22); g.lineTo(10,20); g.quadraticCurveTo(26,18,22,4); g.moveTo(-80,12); g.lineTo(-80,21); g.moveTo(-20,10); g.lineTo(-20,20); g.stroke();
   g.restore(); }
 function bgCompass(g,o){ const ink=MAPC.ink, S=ISO_S; g.save(); g.translate(o.x,o.y); g.lineJoin='round';
   g.save(); g.scale(1,S);
@@ -2248,13 +2475,14 @@ function bgCompass(g,o){ const ink=MAPC.ink, S=ISO_S; g.save(); g.translate(o.x,
   [['N',0,-158*S-6],['S',0,158*S+8],['W',-160,0],['O',160,0]].forEach(([t,x,y])=>{ g.strokeText(t,x,y); g.fillText(t,x,y); });
   g.restore(); }
 function bgFrame(g,x0,y0,x1,y1){ const W=WORLD_W, H=WORLD_H, b=44; if(x0>b+10&&y0>b+10&&x1<W-b-10&&y1<H-b-10) return;
-  g.fillStyle='#ecd9a8'; g.beginPath(); g.rect(-600,-600,W+1200,H+1200); g.rect(b,b,W-2*b,H-2*b); g.fill('evenodd');
+  g.fillStyle=WINTER?'#e6edf5':'#ecd9a8'; g.beginPath(); g.rect(-600,-600,W+1200,H+1200); g.rect(b,b,W-2*b,H-2*b); g.fill('evenodd');
   g.strokeStyle=MAPC.ink; g.lineWidth=5; g.strokeRect(b,b,W-2*b,H-2*b); g.lineWidth=3; g.strokeRect(8,8,W-16,H-16);
+  if(WINTER){ g.strokeStyle='#fbfdff'; g.lineWidth=10; g.strokeRect(26,26,W-52,H-52); }   // ❄️ Winter: rot-weiß wie eine Zuckerstange
   g.strokeStyle='#c8402b'; g.lineWidth=10; g.setLineDash([24,24]); g.strokeRect(26,26,W-52,H-52); g.setLineDash([]); }
 function bgFinish(g,x0,y0,x1,y1){ const D=DECOR, hit=b=>b[0]<x1&&b[2]>x0&&b[1]<y1&&b[3]>y0;
   g.save(); g.fillStyle=bgPats().paper; g.fillRect(x0,y0,x1-x0,y1-y0);
   D.NAMES.forEach(n=>{ if(hit(n.b)) bgName(g,n); });
-  D.DECO.forEach(o=>{ if(hit(o.b)) (o.k==='title'?bgTitle:bgCompass)(g,o); });
+  D.DECO.forEach(o=>{ if(hit(o.b)&&(!o.w||WINTER)) (o.k==='title'?bgTitle:o.k==='sleigh'?bgSleigh:bgCompass)(g,o); });
   bgFrame(g,x0,y0,x1,y1); g.restore(); }
 
 // ---- Kachel-Maler ----
@@ -2264,10 +2492,14 @@ function bgFinish(g,x0,y0,x1,y1){ const D=DECOR, hit=b=>b[0]<x1&&b[2]>x0&&b[1]<y
 const BG={dpr:Math.min(2,window.devicePixelRatio||1), tiles:new Map(), queue:[], pend:false, over:null, P:new Map()};
 function bgPath(key,d){ let p=BG.P.get(key); if(!p){ p=new Path2D(d); BG.P.set(key,p); } return p; }
 const BG_SMALL=new Set(['treeSh','pineSh','bushT','trunk','treeHi','hillHi','spout','armI','arm','spot','suck','stem','sunC','oliveHi','beak']);   // in der kleinen Übersicht unsichtbar klein: weglassen
-function bgCells(ctx,cells,flat,small){ const D=DECOR;
-  const draw=(key,d,[,fill,st,lw])=>{ const p=bgPath(key,d); if(fill){ ctx.fillStyle=fill; ctx.fill(p); } if(st){ ctx.strokeStyle=st; ctx.lineWidth=lw; ctx.stroke(p); } };
-  if(flat) cells.forEach(c=>D.L.forEach(l=>{ const d=c.d[l[0]]; if(d&&D.FLAT.has(l[0])) draw(c.id+l[0],d,l); }));
-  else cells.forEach(c=>c.ops.forEach(([k,d],i)=>{ if(!(small&&BG_SMALL.has(k))) draw(c.id+'#'+i,d,D.LS.get(k)); })); }
+// ❄️ Version 155: im Winter andere Farben (LSW) und Schnee auf allem, was oben eine Kante hat (SNOWT): die Form wird erst weiß gefüllt,
+// dann in ihrer eigenen Farbe ein Stück nach unten verschoben darübergemalt (nur innerhalb der Form) – oben bleibt ein Schneerand.
+function bgCells(ctx,cells,flat,small){ const D=DECOR, W=WINTER, ST=W?D.LSW:D.LS, SN=W&&!small?D.SNOWT:null;
+  const draw=(key,d,k)=>{ const s=ST.get(k), fill=s[1], st=s[2]; if(!fill&&!st) return; const p=bgPath(key,d);
+    if(fill){ const t=SN&&SN.get(k); if(t){ ctx.save(); ctx.clip(p); ctx.fillStyle='#f7fbff'; ctx.fill(p); ctx.translate(0,t); ctx.fillStyle=fill; ctx.fill(p); ctx.restore(); } else { ctx.fillStyle=fill; ctx.fill(p); } }
+    if(st){ ctx.strokeStyle=st; ctx.lineWidth=s[3]; ctx.stroke(p); } };
+  if(flat) cells.forEach(c=>D.L.forEach(l=>{ if(!D.FLAT.has(l[0])) return; const d=c.d[l[0]]; if(d) draw(c.id+l[0],d,l[0]); const e=!W&&c.d['s:'+l[0]]; if(e) draw(c.id+'s:'+l[0],e,l[0]); }));
+  else cells.forEach(c=>c.ops.forEach(([k,d],i)=>{ if(!(small&&(BG_SMALL.has(k)||BG_SMALL.has(k.slice(2))))) draw(c.id+'#'+i,d,k); })); }
 function bgPaint(ctx,x0,y0,x1,y1,noCells,base){   // Weltausschnitt [x0..x1]×[y0..y1] in den schon skalierten ctx malen
   const D=DECOR||buildDecor(), ink=MAPC.ink, hit=b=>b[0]<x1&&b[2]>x0&&b[1]<y1&&b[3]>y0;
   ctx.lineJoin='round'; ctx.lineCap='round';
@@ -2277,9 +2509,10 @@ function bgPaint(ctx,x0,y0,x1,y1,noCells,base){   // Weltausschnitt [x0..x1]×[y
   // Version 133: zwei feine Wellenlinien parallel zur Küste wie auf einer gezeichneten Landkarte
   // (breit hell nachziehen, dann mit dem Meer-Muster etwas schmaler übermalen: übrig bleibt eine Linie im Abstand d)
   for(const d of [104,62]){ strokeCh(D.wring,'wr','rgba(235,250,255,.42)',2*d+2.6); strokeCh(D.wring,'wr',PT.sea,2*d-2.6); }
-  strokeCh(D.shallow,'sh','rgba(150,224,246,.45)',84); strokeCh(D.foam,'fo','rgba(224,247,253,.9)',30);
+  if(WINTER){ strokeCh(D.shallow,'sh','rgba(190,228,248,.42)',84); strokeCh(D.foam,'fo','rgba(244,250,255,.95)',34); }   // ❄️ eisiger Küstensaum
+  else { strokeCh(D.shallow,'sh','rgba(150,224,246,.45)',84); strokeCh(D.foam,'fo','rgba(224,247,253,.9)',30); }
   // Kontur zuerst und doppelt so breit, dann die Fläche darüber: so bleiben nur die Außenkanten sichtbar (keine Striche, wo Inseln überlappen)
-  strokeCh(D.cliffO,'cO',ink,10); fillR(D.cliffA,'cA',MAPC.cliffA); fillR(D.cliffL,'cL',MAPC.cliff);
+  strokeCh(D.cliffO,'cO',ink,10); fillR(D.cliffA,'cA',MAPC.cliffA); fillR(D.cliffL,'cL',WINTER?'#9fb2c6':MAPC.cliff);
   strokeCh(D.landO,'lO',ink,10);
   fillR(D.africa,'af',PT.land); fillR(D.land,'la',PT.land);
   ctx.fillStyle=PT.sea; ctx.fill(bgPath('se',D.seas)); strokeCh(D.seasO,'sO',ink,5);
@@ -2291,7 +2524,7 @@ function bgPaint(ctx,x0,y0,x1,y1,noCells,base){   // Weltausschnitt [x0..x1]×[y
   bgCells(ctx,cells,false);
   bgFinish(ctx,x0,y0,x1,y1);
 }
-function bgBorders(ctx){ ctx.save(); ctx.strokeStyle='rgba(63,107,42,.75)'; ctx.lineWidth=3; ctx.setLineDash([2,9]); ctx.stroke(bgPath('bo',DECOR.borders)); ctx.restore(); }
+function bgBorders(ctx){ ctx.save(); ctx.strokeStyle=WINTER?'rgba(70,92,128,.6)':'rgba(63,107,42,.75)'; ctx.lineWidth=3; ctx.setLineDash([2,9]); ctx.stroke(bgPath('bo',DECOR.borders)); ctx.restore(); }
 function bgOverview(){
   if(BG.over) return BG.over;
   const s=Math.min(2400/WORLD_W,1)*BG.dpr/1.5, c=document.createElement('canvas'); c.width=Math.ceil(WORLD_W*s); c.height=Math.ceil(WORLD_H*s);
@@ -2330,35 +2563,68 @@ function bgJobStep(J,t0,budget){   // true = fertig
 }
 function bgDone(J){
   BG.tiles.set(J.key,{c:J.c,x0:J.x0,y0:J.y0,w:J.w});
-  while(BG.tiles.size>24){ const k=BG.tiles.keys().next().value, o=BG.tiles.get(k); o.c.width=o.c.height=0; BG.tiles.delete(k); }
+  // Version 158 (Flo: Flug ruckelt): Platz für mindestens alle sichtbaren Kacheln (+ vorbereitete Flugstrecke). Vorher waren es fest 24 –
+  // beim Rauszoomen im Flug (und auf großen Bildschirmen) sind mehr zu sehen, dann wurden sichtbare Kacheln weggeworfen und sofort neu gemalt.
+  const cap=Math.max(24,(BG.need||0)+(BG.hold||0)+8);
+  while(BG.tiles.size>cap){ const k=BG.tiles.keys().next().value, o=BG.tiles.get(k); o.c.width=o.c.height=0; BG.tiles.delete(k); }
 }
+// Version 158: Kacheln im Voraus malen (Flugstrecke), wenn sonst nichts zu tun ist
+// in Leerlaufzeit (requestIdleCallback), damit es kein Bild aufhält; wird eine vorbereitete Kachel gebraucht, übernimmt sie der normale Ablauf
+function bgPrefetch(list){ BG.pre=list.filter(m=>!BG.tiles.has(m[0]+':'+m[1]+','+m[2])); BG.hold=list.length; bgPreIdle(); }
+function bgPreIdle(){ if(BG.preRun) return; BG.preRun=true;
+  const ric=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>5,didTimeout:false}),30));
+  const step=dl=>{ BG.preRun=false;
+    while(dl.timeRemaining()>3){
+      if(!BG.pjob){ const m=BG.pre&&BG.pre.shift(); if(!m) return; BG.pjob=bgJob(...m); if(!BG.pjob) continue; }
+      if(BG.job&&BG.job.key===BG.pjob.key){ BG.pjob=null; continue; }
+      if(bgJobStep(BG.pjob,performance.now(),Math.min(5,dl.timeRemaining()-2))){ bgDone(BG.pjob); BG.pjob=null; } }
+    if(BG.pjob||(BG.pre&&BG.pre.length)) bgPreIdle(); };
+  ric(step,{timeout:400}); }
 function bgLater(){ if(BG.pend) return; BG.pend=true;
-  requestAnimationFrame(()=>{ BG.pend=false; const t0=performance.now();
-    if(BG.queue==='over'){ bgOverviewStep(t0); }
+  requestAnimationFrame(()=>{ BG.pend=false; const t0=performance.now(); let got=false;
+    if(BG.queue==='over'){ bgOverviewStep(t0); got=true; }
     else { let m;
       for(;;){
-        if(!BG.job){ m=BG.queue.shift(); if(!m) break; BG.job=bgJob(...m); if(!BG.job) continue; }
-        if(bgJobStep(BG.job,t0,6)){ bgDone(BG.job); BG.job=null; } else break;
+        if(!BG.job){ m=BG.queue.shift(); if(!m) break;
+          const k=m[0]+':'+m[1]+','+m[2]; if(BG.pjob&&BG.pjob.key===k){ BG.job=BG.pjob; BG.pjob=null; }   // halb vorbereitete Kachel übernehmen
+          else { BG.job=bgJob(...m); if(!BG.job) continue; } }
+        if(bgJobStep(BG.job,t0,6)){ bgDone(BG.job); BG.job=null; got=true; } else break;
         if(performance.now()-t0>6) break; } }
-    bgDraw(); if(BG.job&&BG.queue!=='over'&&!BG.queue.length) bgLater(); }); }
+    // Version 158: nur neu zusammensetzen, wenn wirklich eine Kachel fertig wurde (vorher zweimal pro Bild)
+    if(got) bgDraw();
+    if(!BG.pend&&BG.queue!=='over'&&(BG.job||BG.queue.length)) bgLater(); }); }
+// Welche Kachel-Stufe bei Zoom z (0 = nah, 1 = weit, -1 = nur Übersicht)
+const bgLevel=z=>z>=(BG_LV[0].s+BG_LV[1].s)/2*.9?0:(z>=BG_LV[1].s*.45?1:-1);
+// Kacheln, die ein Bildausschnitt um (x,y) bei Zoom z braucht, an die Liste anhängen (ohne doppelte)
+function bgTilesAt(x,y,z,out,seen){ const [w,h]=camBox(), c={x,y,z}; clampCam(c); const lv=bgLevel(z); if(lv<0) return 0;
+  const T=BG_LV[lv].T, vx=c.x-w/z/2, vy=c.y-h/z/2, x1=vx+w/z, y1=vy+h/z; let n=0;
+  for(let iy=Math.floor(vy/T);iy<=Math.floor(y1/T);iy++) for(let ix=Math.floor(vx/T);ix<=Math.floor(x1/T);ix++){ n++; const k=lv+':'+ix+','+iy; if(out&&!seen.has(k)){ seen.add(k); out.push([lv,ix,iy]); } }
+  return n; }
 function bgDraw(){
   const cv=$('#bgc'); if(!cv||!DECOR) return;
+  if(BG.snap&&(Math.abs(cam.x-BG.snap.x)>2||Math.abs(cam.y-BG.snap.y)>2||Math.abs(cam.z-BG.snap.z)>.001)) bgSnapDrop(true);
   const [w,h]=camBox(), d=BG.dpr, W=Math.round(w*d), H=Math.round(h*d);
   if(cv.width!==W||cv.height!==H){ cv.width=W; cv.height=H; }
   const g=cv.getContext('2d',{alpha:false}), z=cam.z, vx=cam.x-w/z/2, vy=cam.y-h/z/2;
   g.setTransform(1,0,0,1,0,0); g.fillStyle=MAPC.sea; g.fillRect(0,0,W,H);
   g.setTransform(z*d,0,0,z*d,-vx*z*d,-vy*z*d); g.imageSmoothingEnabled=true;
   const O=bgOverview(), x1=vx+w/z, y1=vy+h/z;
-  const lv=z>=(BG_LV[0].s+BG_LV[1].s)/2*.9?0:(z>=BG_LV[1].s*.45?1:-1);
+  const lv=bgLevel(z);
   if(lv<0){ g.drawImage(O.c,0,0,WORLD_W,WORLD_H); if(O.rows.length){ BG.queue='over'; bgLater(); } return; }
-  const T=BG_LV[lv].T, miss=[];
+  const T=BG_LV[lv].T, miss=[]; BG.need=0;
   for(let iy=Math.floor(vy/T);iy<=Math.floor(y1/T);iy++) for(let ix=Math.floor(vx/T);ix<=Math.floor(x1/T);ix++){
-    const key=lv+':'+ix+','+iy, t=BG.tiles.get(key);
+    const key=lv+':'+ix+','+iy, t=BG.tiles.get(key); BG.need++;
     if(t){ BG.tiles.delete(key); BG.tiles.set(key,t); g.drawImage(t.c,t.x0,t.y0,t.w,t.w); }   // neu einsortiert = zuletzt benutzt
     else { const sx=ix*T, sy=iy*T, s=O.s; g.drawImage(O.c,sx*s,sy*s,T*s,T*s,sx,sy,T,T); miss.push([lv,ix,iy]); }
   }
   if(miss.length){ const cx=cam.x, cy=cam.y; miss.sort((a,b)=>Math.hypot((a[1]+.5)*T-cx,(a[2]+.5)*T-cy)-Math.hypot((b[1]+.5)*T-cx,(b[2]+.5)*T-cy)); BG.queue=miss; bgLater(); }
 }
+// ❄️ Version 155: Jahreszeitenwechsel – altes Bild als Kopie darüberlegen und langsam ausblenden, während darunter die neuen Kacheln entstehen
+function bgSnap(){ const cv=$('#bgc'); if(!cv||!cv.width) return; bgSnapDrop(false); const x=document.createElement('canvas'); x.id='bgx'; x.width=cv.width; x.height=cv.height;
+  x.getContext('2d').drawImage(cv,0,0); cv.after(x); BG.snap={x:cam.x,y:cam.y,z:cam.z,el:x};
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ x.style.opacity='0'; })); BG.snapT=setTimeout(()=>bgSnapDrop(false),3200); }
+function bgSnapDrop(quick){ const S=BG.snap; if(!S) return; BG.snap=null; clearTimeout(BG.snapT);
+  if(quick){ S.el.style.transition='opacity .35s'; S.el.style.opacity='0'; setTimeout(()=>{ S.el.width=S.el.height=0; S.el.remove(); },400); } else { S.el.width=S.el.height=0; S.el.remove(); } }
 // Landschaft der Zellen in Leerlaufzeit vorausberechnen (nah an der Kamera zuerst), damit neue Kacheln beim Fahren schneller fertig sind
 function bgWarm(){ if(BG.warm) return; const D=DECOR, list=[];
   for(let cj=-1;cj*D.CH<WORLD_H+D.CH;cj++) for(let ci=-1;ci*D.CW<WORLD_W+D.CW;ci++) list.push([ci,cj]);
@@ -2494,19 +2760,42 @@ function lblDraw(){
   g.setTransform(1,0,0,1,0,0); g.clearRect(0,0,W,H);
   g.setTransform(z*d,0,0,z*d,-vx*z*d,-vy*z*d); g.textBaseline='alphabetic'; g.lineJoin='miter'; g.miterLimit=4;
   NREQ=false; if(RAINA>0) rainDraw(g,vx,vy,x1,y1); if(NIGHTA>0) nightDraw(g,vx,vy,x1,y1,W,H);
+  if(LBLC){ g.drawImage(LBLC.c,LBLC.x0,LBLC.y0,LBLC.x1-LBLC.x0,LBLC.y1-LBLC.y0); return; }   // Version 158: im Flug fertiges Bild der Namen
+  lblText(g,vx,vy,x1,y1);
+}
+function lblText(g,vx,vy,x1,y1){
   let f='';
   for(const L of LBL){ const b=L.b; if(!(b[0]<x1&&b[2]>vx&&b[1]<y1&&b[3]>vy)) continue;
     if(L.f!==f){ f=L.f; g.font=f; } g.textAlign=L.al;
     if(L.st){ g.strokeStyle=L.st; g.lineWidth=L.sw; g.strokeText(L.t,L.x,L.y); }
     g.fillStyle=L.fill; g.fillText(L.t,L.x,L.y); }
 }
+// Version 158 (Flo: Flug ruckelt): Beim Fliegen ändert sich der Zoom in jedem Bild – dann musste der Browser alle Ortsnamen jedes Mal
+// in neuer Größe neu schreiben. Jetzt werden die Namen für den ganzen Flugbereich einmal beim Abheben in ein Bild gemalt,
+// das im Flug nur noch verschoben und skaliert wird. Nach der Landung wieder wie immer.
+let LBLC=null;
+function lblCacheMake(x0,y0,x1,y1,z){
+  const W=x1-x0, H=y1-y0; let s=z*BG.dpr; s=Math.min(s,4096/W,4096/H,Math.sqrt(9e6/(W*H)));
+  const c=document.createElement('canvas'); c.width=Math.ceil(W*s); c.height=Math.ceil(H*s);
+  const g=c.getContext('2d'); if(!g) return; g.setTransform(s,0,0,s,-x0*s,-y0*s); g.textBaseline='alphabetic'; g.lineJoin='miter'; g.miterLimit=4;
+  lblText(g,x0,y0,x1,y1); LBLC={c,x0,y0,x1,y1}; }
+function lblCacheDrop(){ if(!LBLC) return; LBLC.c.width=LBLC.c.height=0; LBLC=null; }
 // Nachtmodus: Dunkelheit über die Karte legen, dann Lichtflecken herausschneiden (destination-out) und warm einfärben
 let NGL=null; const NSPR={};
 function nSprite(k){ if(NSPR[k]) return NSPR[k]; const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d'),
   r=g.createRadialGradient(64,64,0,64,64,64), st=k==='cut'?[[0,'rgba(0,0,0,1)'],[.35,'rgba(0,0,0,.85)'],[.7,'rgba(0,0,0,.35)'],[1,'rgba(0,0,0,0)']]
     :k==='town'?[[0,'rgba(255,214,120,.55)'],[.4,'rgba(255,180,80,.25)'],[1,'rgba(255,160,60,0)']]
+    :k[0]==='l'?(c=>[[0,`rgba(${c},.95)`],[.25,`rgba(${c},.6)`],[1,`rgba(${c},0)`]])({lR:'255,80,90',lY:'255,225,90',lG:'90,240,110',lB:'90,180,255'}[k])
     :[[0,'rgba(255,236,170,.4)'],[1,'rgba(255,220,140,0)']];
   st.forEach(([o,s])=>r.addColorStop(o,s)); g.fillStyle=r; g.fillRect(0,0,128,128); return NSPR[k]=c; }
+// ❄️ Version 155: Weihnachtsmärkte, das Haus des Weihnachtsmanns und der Schlitten am Himmel leuchten nachts
+function winterGlows(){ const out=[]; if(!DECOR) return out; const C=['lR','lY','lG','lB'];
+  DECOR.XMS.forEach(m=>{ const s=m.s, r=m.kind==='santa'?110:96, lights=[];
+    if(m.kind==='santa'){ for(let k=0;k<9;k++) lights.push([m.x+(-22+k*5.5)*s,m.y-16.6*s,C[k&3]]); for(const q of [[-4,-35],[4,-27],[-7,-21],[7,-17]]) lights.push([m.x-36*s+q[0]*1.1*s,m.y-2*s+q[1]*1.1*s,C[(q[0]+40)&3]]); }
+    else { for(const u of [-30,30]) for(let k=0;k<7;k++) lights.push([m.x+(u-13.5+k*4.5)*s,m.y-10*s,C[k&3]]); [[-4,-35],[4,-27],[-7,-21],[7,-17],[-2,-14],[10,-9],[-10,-9],[3,-8]].forEach((q,i)=>lights.push([m.x+q[0]*1.5*s,m.y-8*s+q[1]*1.5*s,C[i&3]])); lights.push([m.x,m.y-75*s,'lY']); }
+    out.push({x:m.x,y:m.y-20*s,r,town:true,lights,b:[m.x-r,m.y-r,m.x+r,m.y+r]}); });
+  DECOR.DECO.forEach(o=>{ if(o.k==='sleigh'){ const x=o.x+(195+25.5*1.05)*1.35, y=o.y-90-(52+13.5*1.05)*1.35; out.push({x,y,r:40,town:false,lights:[[x,y,'lR'],[x,y,'lR']],b:[x-40,y-40,x+40,y+40]}); } });
+  return out; }
 function nightGlows(){ if(NGL) return NGL; NGL=[];
   CITIES.forEach((c,i)=>{ const big=BIG.has(c.n), r=c.wp?24:(big?92:68); NGL.push({x:c.x,y:c.y-4,r,town:!c.wp,b:[c.x-r,c.y-r,c.x+r,c.y+r]}); });
   // Version 145: auf jeder Brücke brennen nachts zwei kleine Laternen
@@ -2521,8 +2810,8 @@ function nightRoutes(vx,vy,x1,y1){ const out=[];
     if(p.length) out.push({y,p}); }
   return out; }
 function nightDraw(g,vx,vy,x1,y1,W,H){
-  const t=g.getTransform(); g.setTransform(1,0,0,1,0,0); g.globalAlpha=NIGHTA; g.fillStyle='rgba(3,7,26,.82)'; g.fillRect(0,0,W,H); g.setTransform(t);   // Version 130: dunkler (vorher .66)
-  const L=nightGlows(), cut=nSprite('cut'), town=nSprite('town'), vis=[];
+  const t=g.getTransform(); g.setTransform(1,0,0,1,0,0); g.globalAlpha=NIGHTA; g.fillStyle=WINTER?'rgba(7,15,44,.76)':'rgba(3,7,26,.82)'; g.fillRect(0,0,W,H); g.setTransform(t);   // Version 155: Schnee leuchtet nachts etwas bläulich   // Version 130: dunkler (vorher .66)
+  const L=WINTER?(NGLX||(NGLX=nightGlows().concat(winterGlows()))):nightGlows(), cut=nSprite('cut'), town=nSprite('town'), vis=[];
   const far=x1-vx>2600;   // weit herausgezoomt: die kleinen Feld-Lichter wären winzig, nur Städte leuchten
   for(const o of L){ if(far&&!o.town) continue; const b=o.b; if(b[0]<x1&&b[2]>vx&&b[1]<y1&&b[3]>vy) vis.push(o); }
   // 🚧 Version 149: Baustellen im Bildausschnitt – ein heller Fleck und orange leuchtende Warnlampen
@@ -2559,6 +2848,10 @@ function nightDraw(g,vx,vy,x1,y1,W,H){
     g.restore(); }
   g.globalCompositeOperation='source-over';
   for(const o of vis) if(o.town) g.drawImage(town,o.x-o.r*.8,o.y-o.r*.56,o.r*1.6,o.r*1.12);
+  // ❄️ Version 155: Lichterketten der Weihnachtsmärkte und Rudolphs Nase leuchten bunt
+  if(WINTER&&!far){ g.globalCompositeOperation='lighter';
+    for(const o of vis) if(o.lights) for(const [lx,ly,c] of o.lights) g.drawImage(nSprite(c),lx-9,ly-9,18,18);
+    g.globalCompositeOperation='source-over'; }
   for(const w of wk) for(const [lx,ly] of w.L){ const rg=g.createRadialGradient(lx,ly,0,lx,ly,24); rg.addColorStop(0,'rgba(255,186,40,.6)'); rg.addColorStop(1,'rgba(255,130,0,0)'); g.fillStyle=rg; g.fillRect(lx-24,ly-24,48,48); }
   for(const p of cars){ const a=p.hd||0, cs=Math.cos(a), sn=Math.sin(a);
     g.save(); g.transform(cs,sn*ISO_S,-sn,cs*ISO_S,p.nx,p.ny);
@@ -3066,18 +3359,22 @@ function netBar(){
   if(w&&gone.includes(w.p)&&now-NET.gone.get(w.p.cid)>8000) h+=` <button type="button" class="alt" id="nbcpu">🤖 Computer fährt für ${esc(w.p.name)}</button>`;
   if(NET.p2pLost) h+=` · <span class="nbx">📴 ${esc(NET.p2pLost)}</span>`;
   if(NET.bad) h+=` · <span class="nbx">⚠️ Spielstand auf den Geräten weicht ab – bitte neu starten</span>`;
-  b.innerHTML=h; b.hidden=false;
+  if(b._h!==h){ b._h=h; b.innerHTML=h; } b.hidden=false;   // Version 158: nur neu schreiben, wenn sich etwas geändert hat
   const c=$('#nbcpu'); if(c) c.onclick=()=>{ const t=NET.wait; if(t) netSend(t.s,NET_CPU); };
 }
 setInterval(()=>{ if(NET.on){ netBar(); netCatchUp(); } },1000);
 // Version 142 (Flo): War ein Gerät minimiert, hat es evtl. mehr Züge verpasst, als in den letzten 60 Entscheidungen
 // mitgeschickt werden. Wartet es länger als 2,5 s auf eine Nummer, meldet es sie (w); jedes Gerät, das die Nummer kennt,
 // reicht ab dort bis zu 150 Entscheidungen nach (c). Funktioniert über alle Übertragungswege (Raum, PeerJS, Testmodus).
+function netAhead(s){ return NET.peers.some(q=>q.cid!==NET.cid&&q.d&&q.d.g===NET.gid&&Array.isArray(q.d.l)&&q.d.l.some(e=>Array.isArray(e)&&e[0]>=s)); }
 function netCatchUp(){
   if(!NET.on||!NET.tr||!NET.gid) return;
   const now=Date.now();
   let need=null;
-  if(NET.waits.size){ if(!NET.needT) NET.needT=now; else if(now-NET.needT>2500) need=Math.min(...NET.waits.keys()); } else NET.needT=0;
+  // Version 158 (Flo: online ruckelt, wenn andere dran sind): nur nachfragen, wenn ein anderes Gerät diese Entscheidung schon hat
+  // (seine Liste reicht bis dorthin oder weiter). Wartet man nur, weil der Mitspieler noch fährt oder überlegt, wird nichts verschickt –
+  // vorher gingen dabei bei jeder Entscheidung mehrere unnötige Meldungen hin und her.
+  if(NET.waits.size){ if(!NET.needT) NET.needT=now; else if(now-NET.needT>2500){ const s=Math.min(...NET.waits.keys()); if(netAhead(s)) need=s; } } else NET.needT=0;
   const nv=need==null?null:[NET.gid,need];
   if((nv&&nv.join())!==(NET.need&&NET.need.join())){ NET.need=nv; NET.tr.set({w:nv}); }
   let from=null;
@@ -3173,6 +3470,8 @@ function netSyncRows(){
     const v=Math.max(0,Math.min(CAR_MODELS.length-1,q.veh|0)); if(SETVEH[i]!==v){ SETVEH[i]=v; drawVehBtn(i); } $('#vb'+i).disabled=true;
   }
 }
+// Version 158: nur schreiben, wenn sich der Inhalt geändert hat (jede Netz-Meldung ruft das auf)
+function setH(e,h){ if(e&&e._h!==h){ e._h=h; e.innerHTML=h; } }
 function netLobby(){
   const b0=$('#onBox0'), b1=$('#onBox1'); if(!b0) return;
   const open=!$('#onOpen').dataset.open?false:true;
@@ -3183,15 +3482,15 @@ function netLobby(){
   const test=NET.kind==='tabs'?'<div class="onnote">⚠️ Testmodus ohne Internet-Verbindung: Es verbinden sich nur Fenster in diesem Browser.</div>'
     :NET.kind==='p2p'?(NET.p2pLost?`<div class="onerr">📴 ${esc(NET.p2pLost)}</div>`:'')+(NET.host?'<div class="onnote">Direkte Verbindung zwischen den Geräten. Lass dein Gerät bis zum Schluss an und die Seite offen – du bist die Zentrale.</div>':''):'';
   const host=NET.peers.find(q=>q.host);
-  $('#onHead').innerHTML=NET.host
+  setH($('#onHead'),NET.host
     ?`<p>Dein Raumcode – gib ihn deinen Freunden:</p><div class="oncode">${esc(NET.code)}</div>${test}`
-    :`<p>Du bist im Raum <b>${esc(NET.code)}</b>.</p>${test}`;
-  $('#onPpl').innerHTML=NET.peers.map(q=>`<span>${q.host?'👑':'🙂'} ${esc(String(q.nm||'?').slice(0,14))}${q.cid===NET.cid?' (du)':''}</span>`).join('');
+    :`<p>Du bist im Raum <b>${esc(NET.code)}</b>.</p>${test}`);
+  setH($('#onPpl'),NET.peers.map(q=>`<span>${q.host?'👑':'🙂'} ${esc(String(q.nm||'?').slice(0,14))}${q.cid===NET.cid?' (du)':''}</span>`).join(''));
   const seats=NET.host?ROWCID.filter(Boolean).length:0, extra=NET.host?NET.peers.filter(q=>q.cid!==NET.cid).length-seats:0;
-  $('#onInfo').innerHTML=NET.host
+  setH($('#onInfo'),NET.host
     ?`<p>Freunde bekommen automatisch einen Platz mit „🌐 Online“ in der Fahrerliste. Freie Plätze kannst du mit Computergegnern füllen. Dann tippe auf <b>Rallye starten!</b></p>${extra>0?`<p class="onnote">${extra} ${extra>1?'Leute schauen':'Person schaut'} nur zu (alle 6 Plätze belegt).</p>`:''}`
     :(host?`<p>Wähle oben deinen Namen und dein Fahrzeug. Warte, bis <b>${esc(String(host.nm||'der Gastgeber'))}</b> die Rallye startet …</p>${host.g&&host.g.id===NET.seenG&&host.g.id!==NET.gid?'<p class="onnote">Gerade läuft schon ein Spiel. Beim nächsten bist du dabei.</p>':''}`
-      :'<p>Warte auf den Gastgeber … Stimmt der Code?</p>');
+      :'<p>Warte auf den Gastgeber … Stimmt der Code?</p>'));
 }
 $('#onOpen').onclick=()=>{ if(NET.tr) return; const o=$('#onOpen'); o.dataset.open=o.dataset.open?'':'1'; netLobby(); };
 function netNewCode(){ const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c=''; for(let i=0;i<4;i++) c+=A[Math.floor(Math.random()*A.length)]; return c; }
@@ -3875,6 +4174,16 @@ async function flyTo(p,dest){
   const wrap=d=>Math.atan2(Math.sin(d),Math.cos(d)), hd0=p.hd||0, hdF=Math.atan2((b.y-a.y)/ISO_S,b.x-a.x), dH=wrap(hdF-hd0);
   const ux=Math.cos(hdF), uy=Math.sin(hdF)*ISO_S;   // Flugrichtung im Bild
   const sm=(e0,e1,x)=>{ const t=Math.min(1,Math.max(0,(x-e0)/(e1-e0))); return t*t*(3-2*t); };
+  // Flugbahn: anrollen, schnell, ausrollen; Höhe steigt und sinkt wieder
+  const fpos=u=>{ const e=u<.5?2*u*u*(1.5-u):1-2*(1-u)*(1-u)*(.5+u), alt=ALT*sm(.1,.4,u)*(1-sm(.64,.92,u));
+    return {x:a.x+(b.x-a.x)*e, y:a.y+(b.y-a.y)*e, alt}; };
+  // Version 158 (Flo: Flug ruckelt): Landschaft entlang der ganzen Flugstrecke schon beim Abheben im Voraus malen
+  // (in der Reihenfolge, in der sie ins Bild kommt) – vorher wurde sie erst gemalt, wenn sie schon zu sehen war
+  { const out=[], seen=new Set(), [w,h]=camBox(); let X0=1e9,Y0=1e9,X1=-1e9,Y1=-1e9;
+    for(let i=0;i<=48;i++){ const q=fpos(i/48), z=z0*(1-.42*q.alt/ALT), c={x:q.x,y:q.y-q.alt*.6-10,z}; bgTilesAt(c.x,c.y,z,out,seen);
+      clampCam(c); X0=Math.min(X0,c.x-w/z/2-80); X1=Math.max(X1,c.x+w/z/2+80); Y0=Math.min(Y0,c.y-h/z/2-80); Y1=Math.max(Y1,c.y+h/z/2+80); }
+    bgTilesAt(b.x,b.y-10,z0,out,seen); bgPrefetch(out);
+    try{ lblCacheMake(X0,Y0,X1,Y1,z0); }catch(e){ LBLC=null; } }
   let key='';
   const show=(hd,gear,alt,sc)=>{
     if(!pb) return;
@@ -3903,9 +4212,7 @@ async function flyTo(p,dest){
   // 2) Start, Flug, Landung
   SND.play('plane',dur/1000);
   await run(dur,(u,dt,now)=>{
-    const e=u<.5?2*u*u*(1.5-u):1-2*(1-u)*(1-u)*(.5+u);   // anrollen, schnell, ausrollen
-    const alt=ALT*sm(.1,.4,u)*(1-sm(.64,.92,u)), h=alt/ALT;
-    const x=a.x+(b.x-a.x)*e, y=a.y+(b.y-a.y)*e;
+    const {x,y,alt}=fpos(u), h=alt/ALT;
     p.vx=x; p.vy=y; placeTokens();
     const gear=u<.5?h<.3:h<.55;
     show(hdF,gear,alt,1+.75*h);
@@ -3921,6 +4228,7 @@ async function flyTo(p,dest){
   await new Promise(res=>setTimeout(res,160*SPEED));
   if(car) car.style.display=''; if(pl) pl.style.display='none'; if(ring) ring.style.display='';
   p.hd=hdF; p.anim=false; p.pos=dest; p.trail=[]; p.driveEnd=0; stat(p,'fluege');
+  BG.hold=0; BG.pre=[]; lblCacheDrop();
   if(el) requestAnimationFrame(()=>{ el.style.transition=''; });
   if(g!==gameId) throw 'abort';
   camT.z=followZ(); render(); camTarget();
@@ -4940,6 +5248,9 @@ async function roundEnd(){
   if(ROUND%TAX_EVERY===0) await taxRound();
   { const k=ROUND%(DAY_ROUNDS+NIGHT_ROUNDS), n=k>=DAY_ROUNDS;   // nach Runde 6 wird es Nacht, nach Runde 10 (nach den Steuern) wieder Tag
     if(n!==NIGHT){ setNight(n,true); say(n?'🌙 Es wird Nacht. Die Scheinwerfer gehen an.':'☀️ Die Sonne geht auf, es wird Tag.'); } }
+  { const w=winterAt(ROUND);   // ❄️ Version 155: nach 50 Runden Sommer kommt der Winter (30 Runden), dann wieder der Sommer
+    if(w!==WINTER){ setWinter(w,true); say(w?'❄️ Der Winter ist da – Frohe Weihnachten! 30 Runden liegt jetzt Schnee.':'☀️ Der Schnee schmilzt, der Sommer kommt zurück (50 Runden).'); goalBar(); }
+    else if(winterAt(ROUND+1)!==WINTER) seasonPrep(!WINTER); }
   rainTick();
   await worksTick();
   await hikerTick();
@@ -5118,6 +5429,8 @@ function startGame(list,opt){
   RSEED=opt.seed!=null?opt.seed>>>0:(Math.random()*4294967296)>>>0;
   netReset(opt);
   STAGES=opt.stages||parseInt($('#stages').value)||3;
+  SANTA=list.some(l=>String(l.name||'').trim().replace(/\s+/g,' ').toLowerCase()==='santa claus');
+  SEASON0=0; setWinter(winterAt(0));   // ❄️ immer Sommer – außer mit Santa Claus (Version 157: keine Auswahl im Startmenü mehr)
   players=list.map(l=>({name:l.name,slot:l.slot,veh:l.veh??l.slot,cpu:l.cpu,cid:l.cid||null,pos:START,hd:0,trail:[],money:300,objs:[],inv:[startItem()],doubleRent:false,slotsNext:1,skip:0,steer:0,finished:false,rank:0,again:false,st:newStats()}));
   routeBtns(); renderScore();   // Version 153: gleich die neuen Spielerkarten zeigen, nicht die alten bis zur Zielauslosung
   $('#goal').textContent='🎯 Ziel wird ausgelost …';
