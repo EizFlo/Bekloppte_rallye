@@ -259,7 +259,7 @@ html.night #die{box-shadow:0 0 12px rgba(255,213,74,.25)}
   <div id="resBox" hidden><p id="resTxt"></p><div class="onbtns"><button type="button" id="resGo">🔄 Wieder einsteigen</button><button type="button" class="alt" id="resNo">Verwerfen</button></div><div class="onerr" id="resErr"></div></div>
   <b>Wer fährt mit?</b> <small style="color:var(--muted)">Tippe aufs Fahrzeug, um es zu wechseln.</small>
   <div id="rows"></div>
-  <div class="row strow"><span class="dot">🏁</span><label for="stages" style="flex:1;font-weight:700">Etappen (Ziele)</label><span class="pk"><button type="button" class="alt stb" id="stm" aria-label="Weniger Etappen">◀</button><span class="pkv pkt" id="stval">3</span><input type="hidden" id="stages" value="3"><button type="button" class="alt stb" id="stp" aria-label="Mehr Etappen">▶</button></span></div>
+  <div class="row strow"><span class="dot">🏁</span><label for="stages" style="flex:1;font-weight:700">Etappen (Ziele)</label><span class="pk"><button type="button" class="alt stb" id="stm" aria-label="Weniger Etappen">◀</button><span class="pkv pkt" id="stval">5</span><input type="hidden" id="stages" value="5"><button type="button" class="alt stb" id="stp" aria-label="Mehr Etappen">▶</button></span></div>
   <div class="row sndrow"><span class="dot">🎵</span><span style="flex:1;font-weight:700">Ton</span><button class="alt" data-snd="sfx" aria-label="Soundeffekte">🔊 Effekte</button><button class="alt" data-snd="mus" aria-label="Musik">🎵 Musik</button></div>
   <details><summary>Spielregeln</summary>
     <p>🎯 Alle starten in Heidenheim. Bei jeder Etappe läuft ein Licht über alle möglichen Ziele (nur große Städte) und bleibt zufällig an einem stehen. Wer das Ziel zuerst genau erreicht, gewinnt die Etappe und bekommt den Etappenpreis: 400 € in der ersten Etappe, und jede weitere Etappe bringt 100 € mehr. Außerdem steigt der Preis mit jeder Runde der Etappe um 10 € (oben in der Zielleiste bei 🏆). Dann beginnt sofort die nächste Etappe, alle bleiben dabei auf ihren Positionen. Geld und Objekte bleiben über alle Etappen erhalten. Vor dem Start wählst du, wie viele Etappen gespielt werden (1 bis 50, voreingestellt sind 3).</p>
@@ -444,7 +444,7 @@ const SND=(()=>{
     if(on&&rainN&&rainN.sn!==sn){ const r=rainN; rainN=null; r.g.gain.cancelScheduledValues(t); r.g.gain.setValueAtTime(Math.max(.0001,r.g.gain.value),t); r.g.gain.exponentialRampToValueAtTime(.0001,t+2); r.src.stop(t+2.1); }
     if(on&&!rainN){ const src=ctx.createBufferSource(), hp=ctx.createBiquadFilter(), lp=ctx.createBiquadFilter(), g=ctx.createGain();
       src.buffer=noiseBuf; src.loop=true; src.playbackRate.value=sn?.5:.9; hp.type='highpass'; hp.frequency.value=sn?140:500; lp.type='lowpass'; lp.frequency.value=sn?650:3200; lp.Q.value=sn?1.2:.4;
-      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(sn?.045:.06,t+2.5);
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(sn?.045:.03,t+2.5);   // Version 166 (Flo): Regen 50 % leiser
       src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(sfxG); src.start(t); rainN={src,g,sn}; }
     else if(!on&&rainN){ const r=rainN; rainN=null; r.g.gain.cancelScheduledValues(t); r.g.gain.setValueAtTime(Math.max(.0001,r.g.gain.value),t); r.g.gain.exponentialRampToValueAtTime(.0001,t+2.5); r.src.stop(t+2.6); } }
 
@@ -488,6 +488,11 @@ const SND=(()=>{
   const CC=['Em','Em','C','G','Am','D','G','D7'];
   const MD=['G5 _ B5 _ D6 _ B5 G5','A5 G5 E5 D5 E5 _ . .','E5 _ G5 _ C6 _ G5 E5','D5 C5 B4 A4 G4 _ . .','B4 D5 G5 D5 B5 G5 D5 G5','F#5 A5 D6 A5 F#5 D5 A4 _','G5 _ D5 _ B4 _ D5 _','G4 _ _ _ . . . .'];
   const DC=['G','G','C','C','G','D','G','G'];
+  // Version 164 (Flo): ruhiger Teil – erst Klavier, dann leise Fiddle, dazu gezupfte Gitarre, kaum Schlagzeug
+  const MQ1=['E5 _ _ _ G5 _ E5 _','D5 _ _ _ B4 _ _ _','C5 _ E5 _ A5 _ G5 _','G5 _ _ _ E5 _ . .','E5 _ G5 _ C6 _ B5 _','B5 _ A5 _ G5 _ D5 _','C5 _ E5 _ D5 _ C5 _','D5 _ _ _ F#5 _ A5 _'];
+  const QC1=['C','G','Am','Em','C','G','Am','D'];
+  const MQ2=['G5 _ _ _ E5 _ G5 _','D6 _ _ _ B5 _ _ _','C6 _ B5 _ A5 _ E5 _','G5 _ _ _ . . . .','E5 _ G5 _ C6 _ E6 _','D6 _ _ _ A5 _ F#5 _','G5 _ B5 _ D6 _ B5 _','A5 _ _ _ F#5 _ D5 _'];
+  const QC2=['C','D','Am','Em','C','D','G','D7'];
   const IC=['G','G','D','G'];   // Vorspiel ohne Melodie
   const RC=['G','C','D','G'];   // Banjo-Zwischenspiel mit Späßen
   // Gitarrengriffe (6 Saiten, MIDI) und Grundton/Quinte für den Bass
@@ -498,7 +503,7 @@ const SND=(()=>{
   // v: 0 Vorspiel, 1 A, 2 B, 3 A', 4 B', 5 Zwischenspiel
   const FORM=[]; const add=(mel,ch,v)=>mel.forEach((b,i)=>FORM.push({mel:b?pm(b):[],ch:ch[i],v,i}));
   // v6 = C (Fiddle mit Banjo-Rolls, Moll), v7 = D (Fiddle und Banjo wechseln sich taktweise ab)
-  add([0,0,0,0],IC,0); add(A,AC,1); add(B,BC,2); add(MC,CC,6); add(A2,AC,3); add(MD,DC,7); add(B,BC,4); add([0,0,0,0],RC,5);
+  add([0,0,0,0],IC,0); add(A,AC,1); add(B,BC,2); add(MC,CC,6); add(A2,AC,3); add(MD,DC,7); add(MQ1,QC1,8); add(MQ2,QC2,9); add(B,BC,4); add([0,0,0,0],RC,5);
   const BPM=126, E8=60/BPM/2, SW=E8*.14;   // leichter Shuffle auf den Achteln dazwischen
   let musOn=false, timer=0, bar=0, nextT=0;
 
@@ -590,8 +595,24 @@ const SND=(()=>{
   const ROLL=[0,1,2,0,1,2,0,2, 0,1,2,0,1,2,1,2];
   function banjoRoll(c,t,vol){ const g=CH[c].g, tones=[g[g.length-3]+12,g[g.length-2]+12,79];
     ROLL.forEach((k,i)=>pluckS(tones[k],'banjo',t+i*E8/2+(i%4===2?SW*.5:0),(i%4===0?.17:.12)*vol,0,5200)); }
+  // Ruhiger Teil (Version 164, Flo): v8 Klavier-Melodie, v9 leise Fiddle mit Klavier darunter
+  const PICK=[0,3,4,5,2,4,3,5];   // Zupfmuster über die Gitarrensaiten (Achtel)
+  function schedQuiet(B,c,v,off){
+    pluckS(c.r,'bass',off(0),.1,E8*6);
+    const g=c.g, st=k=>g[Math.min(g.length-1,Math.max(0,k-(6-g.length)))];
+    PICK.forEach((k,s)=>pluckS(st(k),'guit',off(s),s===0?.085:.06,E8*2.5));
+    playBuf(pcBuf(B.ch),1,off(0),.03,E8*5);
+    if(v===9){ playBuf(pcBuf(B.ch),1,off(4),.022,E8*3); if(B.i%2===0) kick(off(0),.09); brush(off(6),.025); }
+    if(v===9&&B.i===7){ kick(off(4),.14); brush(off(6),.05); brush(off(7),.04); kick(off(7),.12); }   // Auftakt zurück in den lustigen Teil
+    B.mel.forEach(n=>{ const tt=off(n.s), d=Math.max(.2,n.len*E8*.95);
+      if(v===8){ piano(n.m,tt,.11,d+.4); piano(n.m-12,tt,.04,d+.3); }
+      else { fiddle(n.m,tt,d,.045,false,n.len>=3); piano(n.m-12,tt,.045,d+.3); }
+    });
+    if(v===8&&B.i===3){ const pc=pChord(B.ch).map(x=>x+12); [6,7].forEach((s,k)=>piano(pc[k+1],off(s),.035,E8*1.2)); }   // kleine Klavier-Antwort in der Phrasenpause
+  }
   function schedBar(b,t){
     const B=FORM[b], c=CH[B.ch], v=B.v, off=s=>t+s*E8+(s%2?SW:0);
+    if(v>=8){ schedQuiet(B,c,v,off); return; }
     // Bass: Grundton auf 1, Quinte auf 3, am Ende eines Teils ein kleiner Lauf nach oben
     const walk=(B.i===7||(v===0||v===5)&&B.i===3);
     // Version 124 (Flo): Kontrabass 50 % leiser, Version 126 nochmal 25 % leiser
@@ -3161,7 +3182,7 @@ function renderScore(){
     <b>${VEH[p.veh]} ${esc(p.name)}${p.cpu?' 🤖':''}${NET.on&&p.cid&&p.cid===NET.cid&&!p.cpu?' <small>(du)</small>':''}</b><br>
     💶 ${p.money} € · 🏠 ${p.objs.length}${p.objs.length?` (+${rentOf(p)*(p.doubleRent?2:1)}/R.${p.doubleRent?' ×2':''})`:''}<br>
     🎴 ${p.inv&&p.inv.length?p.inv.map(id=>ITEMS[id].badge).join(' '):'–'} <small>(${p.inv?p.inv.length:0}/${INV_MAX})</small><br>
-    ${p.finished?('🏁 Platz '+p.rank):('📍 '+(CITIES[p.pos].n||'unterwegs')+(GOAL>=0?' · noch '+dreal(p.pos):'')+(p.skip?' · ⏸':'')+(p.steer?' · 🌀':''))}${p.hiker?`<br>🧍 → ${CITIES[p.hiker.dest].n} · noch ${hikerDist(p.hiker.dest)[p.pos]} <small>(${p.hiker.pay} € · ⏳ ${p.hiker.left} R.)</small>`:''}
+    ${p.finished?('🏁 Platz '+p.rank):('📍 '+(CITIES[p.pos].n||'unterwegs')+(GOAL>=0?' · noch '+dreal(p.pos):'')+(p.skip?' · ⏸':'')+(p.steer?' · 🌀':'')+(p.strike?' · ✋':''))}${p.hiker?`<br>🧍 → ${CITIES[p.hiker.dest].n} · noch ${hikerDist(p.hiker.dest)[p.pos]} <small>(${p.hiker.pay} € · ⏳ ${p.hiker.left} R.)</small>`:''}
    </div>`).join('');
   if(html!==SCOREH){ SCOREH=html; $('#score').innerHTML=html; }   // nur bei Änderung neu setzen (sonst Neu-Layout bei jedem Straßenstück)
 }
@@ -3562,11 +3583,11 @@ function netJoinGame(g){
   if(!Array.isArray(g.list)||g.list.length<2) return;
   NET.seenG=g.id; NET.g=g;
   const list=g.list.slice(0,6).map((l,i)=>({name:String(l.name||'Fahrer').slice(0,14),slot:Math.max(0,Math.min(5,l.slot|0)),veh:Math.max(0,Math.min(CAR_MODELS.length-1,l.veh|0)),cpu:!!l.cpu,cid:typeof l.cid==='string'?l.cid:null}));
-  const st=Math.max(1,Math.min(50,g.st|0||3)); setStages(st);
+  const st=Math.max(1,Math.min(50,g.st|0||5)); setStages(st);
   startGame(list,{online:true,gid:String(g.id),seed:g.seed>>>0,stages:st});
 }
 function netStartHosted(list){
-  const g={id:Math.random().toString(36).slice(2,9),seed:(Math.random()*4294967296)>>>0,st:+$('#stages').value||3,list};
+  const g={id:Math.random().toString(36).slice(2,9),seed:(Math.random()*4294967296)>>>0,st:+$('#stages').value||5,list};
   NET.seenG=g.id; NET.g=g; NET.tr.set({g});
   startGame(list,{online:true,gid:g.id,seed:g.seed,stages:g.st});
 }
@@ -3634,7 +3655,7 @@ $('#rows').addEventListener('click',e=>{ if(NET.tr&&e.target.closest('#vb'+netMy
    Ohne Online: ein angefangenes Spiel lässt sich nach dem Neuladen fortsetzen (gleicher Spielstand, gleicher Zufall).
    Neue Spielzustände (globale Variablen, Spieler-Eigenschaften) müssen in snapTake/resumeGame (und PKEYS) mit! */
 const SAVE_KEY='rallye-save-v1', SAVE_MAXAGE=3*24*3600*1000;
-const PKEYS=['name','slot','veh','cpu','cid','pos','hd','trail','money','objs','inv','doubleRent','slotsNext','skip','steer','finished','rank','again','st','tireSafe','hiker','autoRoute','wild','away'];
+const PKEYS=['name','slot','veh','cpu','cid','pos','hd','trail','money','objs','inv','doubleRent','slotsNext','skip','steer','strike','finished','rank','again','st','tireSafe','hiker','autoRoute','wild','away'];
 function saveGet(){ try{ const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null'); if(s&&s.snap&&s.snap.v===1&&Array.isArray(s.snap.players)&&Date.now()-(s.t||0)<SAVE_MAXAGE) return s; }catch(e){} return null; }
 function saveDrop(){ try{ localStorage.removeItem(SAVE_KEY); }catch(e){} resumeUI(); }
 function snapTake(){
@@ -3761,6 +3782,10 @@ setTimeout(resumeUI,0);
 /* ---------- Dialog ---------- */
 let askSeq=0;   // jedes Fenster bekommt eine Nummer, damit ein alter Timer kein neues Fenster schließt
 function ask(msg, labels, o={}){
+  // Version 165 (Flo): Meldungen mit nur einem Knopf („Prima!“, „Vollgas!“, „Autsch“ …) muss man nicht mehr bestätigen –
+  // sie bleiben 2 Sekunden stehen und schließen dann von allein (Knopf drücken geht trotzdem schneller). Eigene Zeiten (auto) bleiben.
+  if(o.popup&&labels.length===1&&o.auto===undefined&&!o.manual) o={...o,auto:3000};   // Version 167 (Flo): 3 statt 2 Sekunden
+  const info=!!(o.popup&&labels.length===1&&o.auto);   // Version 167 (Flo): reine Meldung – ganz ohne Knopf, sie verschwindet von allein
   const g=gameId, pop=!!o.popup, my=++askSeq, who=o.who||cur();
   // 🌐 Onlinespiel: Entscheidet ein Mitspieler auf seinem Gerät (far), sieht man hier die Knöpfe nur ausgegraut und wartet auf seine Wahl
   // Version 141 (Flo): Ist ein Computergegner dran (z. B. Mieteinnahmen/Zwischenstand am Rundenende) und das Fenster hat nur „Weiter“,
@@ -3770,7 +3795,7 @@ function ask(msg, labels, o={}){
   const shared=!!(NET.on&&!o.local&&who&&who.cpu&&o.auto&&labels.length===1);
   const dec=shared?netLead():who;
   const nt0=(!o.local&&labels.length)?netTake(dec):null, nt=nt0&&shared?{...nt0,mine:true}:nt0, far=!!(nt&&!nt.mine);
-  const lock=far||(NET.on&&who&&who.cpu&&!(o.auto&&labels.length===1));   // online darf niemand für den Computer tippen
+  const lock=far||!!(who&&who.cpu);   // Version 166 (Flo): bei Computerzügen kann niemand etwas drücken (wie online), die Fenster laufen von allein ab
   const msgEl=pop?$('#pmsg'):$('#msg'), box=pop?$('#pbtns'):$('#btns'), wrap=$('#popup'); if(pop) $('#pscroll').scrollTop=0;
   msgEl.innerHTML=msg+(far&&dec===who?netWaitHTML(who):''); box.innerHTML=''; box.dataset.cpu=(!o.auto&&(who||{}).cpu)||lock?'1':''; wrap.classList.remove('slotpop','wide'); wrap.hidden=!pop; box.classList.toggle('col',labels.length>2&&!o.grid); box.classList.toggle('grid',!!o.grid); box.classList.toggle('menu',!!o.menu); if(o.menu) box.classList.remove('col');
   return new Promise(res=>{
@@ -3782,6 +3807,7 @@ function ask(msg, labels, o={}){
       if(o.head&&o.head.at===i){ const h=document.createElement('div'); h.className='mhead'; h.innerHTML=o.head.html; box.appendChild(h); }
       const b=document.createElement('button'); b.textContent=l;
       if((o.off&&o.off.includes(i))||lock) b.disabled=true;
+      if(info) b.style.display='none';
       b.onclick=()=>fin(i);
       box.appendChild(b);
     });
@@ -4202,11 +4228,18 @@ const ITEMS={
   versich:{name:'Versicherung',icon:'☂️',badge:'☂️',txt:'Wirkt von allein: Stürzt bei einem Erdbeben ein Gebäude von dir ein, bekommst du 150 % vom Kaufpreis zurück.',kind:'versich',passive:true,w:1.5,val:4},
   steuer:{name:'Steuerbefreiung',icon:'🛡️',badge:'🛡️',txt:'Wirkt von allein: Bei der nächsten Steuer (alle 10 Runden) zahlst du nichts.',kind:'steuer',passive:true,w:1.5,val:5},
   naegel:{name:'Nägel',icon:'📌',badge:'📌',txt:'Kipp Nägel auf ein Straßenstück direkt neben deinem Auto: 2 Runden lang kommt dort niemand durch, alle halten davor an.',kind:'naegel',w:2,val:3},
-  steuerlos:{name:'Steuerlos',icon:'🌀',badge:'🌀',txt:'Verdreh einem Mitspieler das Lenkrad: Bei seinem nächsten Wurf fährt sein Auto an jeder Kreuzung in eine zufällige Richtung – aber nie direkt aufs Ziel.',kind:'steuerlos',w:2,val:4}
+  steuerlos:{name:'Steuerlos',icon:'🌀',badge:'🌀',txt:'Verdreh einem Mitspieler das Lenkrad: Bei seinem nächsten Wurf fährt sein Auto an jeder Kreuzung in eine zufällige Richtung – aber nie direkt aufs Ziel.',kind:'steuerlos',w:2,val:4},
+  // Version 165 (Flo): sechs neue Karten
+  tausch:{name:'Tauschbörse',icon:'🔄',badge:'🔄',txt:'Tausch deinen Platz auf der Karte mit einem Mitspieler deiner Wahl. Danach würfelst du ganz normal.',kind:'tausch',w:1,val:7},
+  turbo:{name:'Turbo',icon:'🚀',badge:'🚀',txt:'Bei deinem Wurf in diesem Zug zählt die Augenzahl doppelt.',kind:'turbo',w:2,val:5},
+  dieb:{name:'Taschendieb',icon:'🕵️',badge:'🕵️',txt:'Klau einem Mitspieler eine zufällige Sammelkarte. Danach würfelst du ganz normal.',kind:'dieb',w:2,val:3},
+  abschlepp:{name:'Abschleppwagen',icon:'🚛',badge:'🚛',txt:'Lass einen Mitspieler 5 Felder zurückschleppen – immer vom Ziel weg. Danach würfelst du ganz normal.',kind:'abschlepp',w:2,val:4},
+  wind:{name:'Windschatten',icon:'💨',badge:'💨',txt:'Du fährst sofort bis direkt hinter das Auto, das als Nächstes vor dir liegt. Danach würfelst du ganz normal.',kind:'wind',w:1.5,val:5},
+  streik:{name:'Mietstreik',icon:'✋',badge:'✋',txt:'Am Ende dieser Runde bekommt der führende Mitspieler (größtes Vermögen) keine Miete.',kind:'streik',w:1.5,val:3}
 };
 for(let n=1;n<=6;n++) ITEMS['feld'+n]={name:n===1?'1 Feld':n+' Felder',icon:'👣',badge:'👣'+n,txt:`Statt zu würfeln fährst du genau ${n} Feld${n>1?'er':''}. Danach wird nicht mehr gewürfelt.`,kind:'steps',n,w:1,val:2};
 // Preise auf dem violetten Kauf-Feld
-const COST={slot2:60,slot3:100,slot4:140,slot5:180,flug:250,erdbeben:80,abkauf:80,bronze:30,silber:80,gold:150,platin:250,zucker:80,naegel:60,steuerlos:80,steuer:120,versich:100};
+const COST={slot2:60,slot3:100,slot4:140,slot5:180,flug:250,erdbeben:80,abkauf:80,bronze:30,silber:80,gold:150,platin:250,zucker:80,naegel:60,steuerlos:80,steuer:120,versich:100,tausch:200,turbo:70,dieb:80,abschlepp:80,wind:150,streik:80};
 // Verkaufen im Karten-Laden: genau die Hälfte des Kaufpreises (Flo)
 const sellPrice=id=>Math.floor(ITEMS[id].cost/2);
 Object.keys(ITEMS).forEach(id=>{ ITEMS[id].cost=COST[id]||40; });
@@ -4216,7 +4249,7 @@ const itemLabel=id=>`${ITEMS[id].icon} ${ITEMS[id].name}`;
 const itemValue=id=>ITEMS[id].val||0;
 // Ziehen mit Gewicht: die fünf Felderkarten zusammen etwa so oft wie zwei andere Karten
 // Startkarte: Flughafen, Platin und Fünf Walzen gibt es nicht zum Start (Flo, Version 109)
-const NO_START=new Set(['flug','platin','slot5']);
+const NO_START=new Set(['flug','platin','slot5','tausch']);
 function startItem(){ let id; for(let n=0;n<50;n++){ id=randomItem(); if(!NO_START.has(id)) return id; } return 'slot2'; }
 function randomItem(){ let r=grand()*ITEM_IDS.reduce((s,id)=>s+ITEMS[id].w,0); for(const id of ITEM_IDS){ r-=ITEMS[id].w; if(r<0) return id; } return ITEM_IDS[0]; }
 const hasItem=(p,id)=>p.inv.includes(id);
@@ -4268,6 +4301,12 @@ function cpuCardPick(p,uniq){
     else if(it.kind==='zucker'){ const t=sugarTargets(p)[0]; if(t&&!t.skip&&(DIST[t.pos]<dist||DIST[t.pos]<=12)) sc=9; }
     else if(it.kind==='naegel'){ if(cpuNailSpot(p)>=0) sc=7; }
     else if(it.kind==='steuerlos'){ const t=steerTargets(p)[0]; if(t&&!t.steer&&!t.skip&&(DIST[t.pos]<dist||DIST[t.pos]<=15)) sc=8; }
+    else if(it.kind==='tausch'){ const t=swapTargets(p)[0]; if(t&&dist-DIST[t.pos]>=10) sc=20+dist-DIST[t.pos]; }
+    else if(it.kind==='turbo'){ if(dist>=10) sc=11; }
+    else if(it.kind==='dieb'){ const t=thiefTargets(p)[0]; if(t&&t.inv.length>=2) sc=6; }
+    else if(it.kind==='abschlepp'){ const t=sugarTargets(p)[0]; if(t&&(DIST[t.pos]<dist||DIST[t.pos]<=12)) sc=8; }
+    else if(it.kind==='wind'){ const w=windPlan(p); if(w&&dist-DIST[w.stop]>=6) sc=10+dist-DIST[w.stop]; }
+    else if(it.kind==='streik'){ const t=strikeTarget(p); if(t&&rentOf(t)>=40) sc=7; }
     if(sc>bs){ bs=sc; best=i+1; }
   });
   return best;
@@ -4288,6 +4327,12 @@ function cpuBuyPick(p,list){
     else if(it.kind==='steuer'&&!hasItem(p,'steuer')) sc=taxOf(p)-it.cost>=40?9:0;
     else if(it.kind==='naegel'&&!hasItem(p,'naegel')) sc=sugarTargets(p).some(q=>DIST[q.pos]<dist)?8:0;
     else if(it.kind==='steuerlos'&&!hasItem(p,'steuerlos')) sc=sugarTargets(p).some(q=>DIST[q.pos]<dist)?10:0;
+    else if(it.kind==='tausch'&&!hasItem(p,'tausch')){ const t=swapTargets(p)[0]; sc=t&&dist-DIST[t.pos]>=15?25:0; }
+    else if(it.kind==='turbo'&&!hasItem(p,'turbo')) sc=dist>=14?12:0;
+    else if(it.kind==='abschlepp'&&!hasItem(p,'abschlepp')) sc=sugarTargets(p).some(q=>DIST[q.pos]<dist)?9:0;
+    else if(it.kind==='wind'&&!hasItem(p,'wind')){ const w=windPlan(p); sc=w&&dist-DIST[w.stop]>=10?16:0; }
+    else if(it.kind==='streik'&&!hasItem(p,'streik')){ const t=strikeTarget(p); sc=t&&rentOf(t)>=80?7:0; }
+    else if(it.kind==='dieb'&&!hasItem(p,'dieb')){ const t=thiefTargets(p)[0]; sc=t&&t.inv.length>=3?6:0; }
     if(full&&itemValue(id)<=worst) sc=0;
     if(sc>bs){ bs=sc; best=i; } });
   return best;
@@ -4364,6 +4409,11 @@ async function chooseBeforeRoll(p){
     if(k==='zucker'&&!sugarTargets(p).length) return ' (kein Mitspieler unterwegs)';
     if(k==='naegel'&&!nailOptions(p).length) return ' (keine freie Straße)';
     if(k==='steuerlos'&&!steerTargets(p).length) return ' (kein Mitspieler unterwegs)';
+    if(k==='tausch'&&!swapTargets(p).length) return ' (kein Mitspieler zum Tauschen)';
+    if(k==='dieb'&&!thiefTargets(p).length) return ' (niemand hat Karten)';
+    if(k==='abschlepp'&&!sugarTargets(p).length) return ' (kein Mitspieler unterwegs)';
+    if(k==='wind'&&!windPlan(p)) return ' (kein Auto vor dir)';
+    if(k==='streik'&&!strikeTarget(p)) return ' (kein Mitspieler mit Miete)';
     return ''; };
   const usable=id=>!why(id);
   const uniq=all.filter(usable).concat(all.filter(id=>!usable(id)));
@@ -4400,6 +4450,17 @@ async function chooseBeforeRoll(p){
       if(!t) continue;
       useItem(p,id); render();
       return {kind:'steuerlos',target:t};
+    }
+    if(it.kind==='tausch'||it.kind==='dieb'||it.kind==='abschlepp'){
+      const t=await chooseVictim(p,it.kind);
+      if(!t) continue;
+      useItem(p,id); render();
+      return {kind:it.kind,target:t};
+    }
+    if(it.kind==='streik'){
+      const t=strikeTarget(p);
+      useItem(p,id); render();
+      return {kind:'streik',target:t};
     }
     if(it.kind==='naegel'){
       const at=await chooseNails(p);
@@ -4510,6 +4571,105 @@ async function sugar(p,t){
   await askPop(`🍬 <b>Zucker im Tank!</b><br>Der Motor von ${VEH[t.veh]} ${esc(t.name)} stottert und geht aus.<br>${esc(t.name)} setzt die nächste Runde aus.`,['Hihi'],{delay:1800});
   pick.innerHTML='';
   camFollow();
+}
+/* ---------- Version 165 (Flo): Tauschbörse, Taschendieb, Abschleppwagen, Windschatten, Mietstreik ---------- */
+// Tauschbörse: Computer nimmt den, der dem Ziel am nächsten ist (nur Mitspieler auf einem anderen Feld)
+function swapTargets(p){ return players.filter(q=>q!==p&&!q.finished&&q.pos!==p.pos).sort((a,b)=>DIST[a.pos]-DIST[b.pos]); }
+// Taschendieb: Computer nimmt den mit den meisten Karten
+function thiefTargets(p){ return players.filter(q=>q!==p&&q.inv&&q.inv.length).sort((a,b)=>(b.inv.length-a.inv.length)||(DIST[a.pos]-DIST[b.pos])); }
+// Mietstreik: der führende Mitspieler (größtes Vermögen) mit Mieteinnahmen, der noch nicht bestreikt wird
+function strikeTarget(p){ const c=players.filter(q=>q!==p&&!q.strike&&rentOf(q)>0).sort((a,b)=>(b.money+valueOf(b))-(a.money+valueOf(a))); return c[0]||null; }
+// Windschatten: das nächste Auto vor einem (kleinere Entfernung zum Ziel) und der Weg bis direkt dahinter (nie übers Ziel, nie durch Nägel/Baustellen)
+function windPlan(p){
+  if(GOAL<0) return null;
+  const ahead=players.filter(q=>q!==p&&!q.finished&&q.pos!==p.pos&&q.pos!==GOAL&&DIST[q.pos]<DIST[p.pos]).sort((a,b)=>DIST[b.pos]-DIST[a.pos]);
+  for(const t of ahead){
+    const d=Array(CITIES.length).fill(1e9); d[t.pos]=0; const q=[t.pos];
+    while(q.length){ const u=q.shift(); NB[u].forEach(v=>{ if(v!==GOAL&&!nailed(u,v)&&d[v]>d[u]+1){ d[v]=d[u]+1; q.push(v); } }); }
+    if(d[p.pos]>=1e9||d[p.pos]<2) continue;
+    const path=[]; let u=p.pos;
+    while(d[u]>1){ const c=NB[u].filter(v=>v!==GOAL&&!nailed(u,v)&&d[v]===d[u]-1).sort((a,b)=>a-b); if(!c.length) break; u=c[0]; path.push(u); }
+    if(!path.length||d[u]!==1) continue;
+    if(DIST[u]>=DIST[p.pos]) continue;   // bringt nichts
+    return {t,path,stop:u};
+  }
+  return null;
+}
+async function chooseVictim(p,kind){
+  const T={tausch:['🔄','Tauschbörse','Mit wem tauschst du den Platz? Danach würfelst du ganz normal.'],
+    dieb:['🕵️','Taschendieb','Wem klaust du eine Karte? Du bekommst eine zufällige aus seinem Inventar.'],
+    abschlepp:['🚛','Abschleppwagen','Wen lässt du 5 Felder zurückschleppen (vom Ziel weg)?']}[kind];
+  const list=kind==='tausch'?swapTargets(p):kind==='dieb'?thiefTargets(p):sugarTargets(p);
+  const labels=list.map(q=>`${VEH[q.veh]} ${q.name} (${kind==='dieb'?`${q.inv.length} Karte${q.inv.length>1?'n':''}`:'noch '+DIST[q.pos]})`).concat(['↩️ Doch nicht']);
+  const k=await askPop(`${T[0]} <b>${T[1]}</b><br>${T[2]}${kind!=='dieb'?`<br><small>Die Zahl zeigt, wie viele Felder er noch bis ${CITIES[GOAL].n} hat. Du hast noch ${DIST[p.pos]}.</small>`:''}`,labels,{cpu:0,delay:1400});
+  return k<list.length?list[k]:null;
+}
+// Comic-Sprechblase mit einem großen Zeichen über dem Auto
+function bubbleSVG(x,y,ic){
+  const S='stroke="#2b2118" stroke-width="3" stroke-linejoin="round"', cy=y-86;
+  return `<g opacity=".97"><path d="M${x-8} ${cy+30}L${x} ${y-34}L${x+10} ${cy+28}Z" fill="#fff" ${S}/><circle cx="${x}" cy="${cy}" r="34" fill="#fff" ${S}/><path d="M${x-8} ${cy+29}L${x+9} ${cy+27}" stroke="#fff" stroke-width="5"/>`+
+    `<text x="${x}" y="${cy+14}" font-size="40" text-anchor="middle">${ic}</text></g>`;
+}
+async function showAt(i,svg){ const c=CITIES[i], pick=$('#pick'); camMode='free'; camT.x=c.x; camT.z=followZ(); camT.y=c.y+camBox()[1]*.18/camT.z; camGo(); pick.innerHTML=svg?svg(c.x,c.y):''; }
+async function swapPlaces(p,t){
+  const a=p.pos, b=t.pos;
+  await showAt(b,(x,y)=>bubbleSVG(x,y,'🔄')); await sleep(700);
+  puffCloud(CITIES[a].x,CITIES[a].y-10,9,34); puffCloud(CITIES[b].x,CITIES[b].y-10,9,34); SND.play('whistle');
+  [p.pos,t.pos]=[b,a]; p.trail=[]; t.trail=[]; p.driveEnd=0; t.driveEnd=0; render(); placeTokens();
+  say(`🔄 ${p.name} tauscht den Platz mit ${t.name}.`);
+  await askPop(`🔄 <b>Tauschbörse!</b><br>${VEH[p.veh]} ${esc(p.name)} und ${VEH[t.veh]} ${esc(t.name)} tauschen die Plätze.<br>${esc(p.name)} steht jetzt in ${CITIES[b].n||'unterwegs'} (noch ${DIST[b]} Felder), ${esc(t.name)} in ${CITIES[a].n||'unterwegs'} (noch ${DIST[a]}).`,['Hihi']);
+  $('#pick').innerHTML=''; camFollow();
+  await hikerAt(p);
+}
+async function pickPocket(p,t){
+  const id=t.inv[rnd(t.inv.length)];
+  t.inv.splice(t.inv.indexOf(id),1);
+  if(p.inv.length<INV_MAX) p.inv.push(id);   // die Diebeskarte ist schon weg, also ist immer Platz
+  render(); SND.play('item');
+  await showAt(t.pos,(x,y)=>bubbleSVG(x,y,'🕵️'));
+  say(`🕵️ ${p.name} klaut ${t.name} die Karte „${ITEMS[id].name}“.`);
+  await askPop(`🕵️ <b>Taschendieb!</b><br>${VEH[p.veh]} ${esc(p.name)} klaut ${VEH[t.veh]} ${esc(t.name)} eine Karte:<div class="card">${itemLabel(id)}<br><small>${ITEMS[id].txt}</small></div>`,['Hihi']);
+  $('#pick').innerHTML=''; camFollow();
+}
+async function towAway(p,t){
+  await showAt(t.pos,(x,y)=>bubbleSVG(x,y,'🚛')); SND.play('honk');
+  say(`🚛 ${p.name} lässt ${t.name} 5 Felder zurückschleppen.`);
+  await askPop(`🚛 <b>Abschleppwagen!</b><br>${VEH[t.veh]} ${esc(t.name)} wird 5 Felder zurückgeschleppt – vom Ziel weg.`,['Hihi']);
+  $('#pick').innerHTML='';
+  // immer vom Ziel weg: am liebsten weiter weg, sonst gleich weit (nie näher ran, nie aufs Ziel, nicht durch Nägel, kein Feld doppelt)
+  const seen=new Set([t.pos]), path=[]; let u=t.pos;
+  for(let k=0;k<5;k++){
+    const c=NB[u].filter(j=>j!==GOAL&&!seen.has(j)&&!nailed(u,j)&&DIST[j]>=DIST[u]).sort((x,y)=>(DIST[y]-DIST[x])||(x-y));
+    if(!c.length) break;
+    u=c[0]; seen.add(u); path.push(u);
+  }
+  t.trail=[]; const n=path.length;
+  for(let k=0;k<n;k++){ const a=t.pos; t.pos=path[k]; await drive(t,a,t.pos,260,k===n-1,k===n-1); }
+  render();
+  if(n<5) say(`🚛 ${t.name} wird nur ${n} Feld${n===1?'':'er'} weit geschleppt – weiter weg vom Ziel geht es hier nicht.`);
+  await sleep(600);
+  camFollow();
+}
+async function slipstream(p){
+  const w=windPlan(p); if(!w) return;
+  say(`💨 ${p.name} hängt sich in den Windschatten von ${w.t.name}.`); SND.play('whoosh');
+  showStatus(`💨 ${VEH[p.veh]} ${esc(p.name)} fährt im Windschatten von ${esc(w.t.name)} …`);
+  camFollow();
+  for(let k=0;k<w.path.length;k++){
+    const nx=w.path[k]; if(nailed(p.pos,nx)) break;
+    const a=p.pos, last=k===w.path.length-1; stepTo(p,nx); await drive(p,a,nx,260,last||hikerStop(p,nx),last);
+    await hikerAt(p);
+  }
+  render();
+  await askPop(`💨 <b>Windschatten!</b><br>${VEH[p.veh]} ${esc(p.name)} klebt jetzt direkt hinter ${VEH[w.t.veh]} ${esc(w.t.name)}.<br>Noch <b>${DIST[p.pos]}</b> Felder bis ${CITIES[GOAL].n}. Jetzt wird gewürfelt.`,['Vollgas!']);
+}
+async function rentStrike(p,t){
+  if(!t) return;
+  t.strike=1; render(); SND.play('loss');
+  await showAt(t.pos,(x,y)=>bubbleSVG(x,y,'✋'));
+  say(`✋ ${p.name} ruft den Mietstreik aus: ${t.name} bekommt am Ende der Runde keine Miete.`);
+  await askPop(`✋ <b>Mietstreik!</b><br>Alle Mieter streiken: ${VEH[t.veh]} ${esc(t.name)} führt und bekommt am Ende dieser Runde <b>keine Miete</b> (sonst ${rentOf(t)*(t.doubleRent?2:1)} €).`,['Hihi']);
+  $('#pick').innerHTML=''; camFollow();
 }
 // 🌀 Steuerlos (Version 132): beim nächsten Wurf fährt das Auto des Mitspielers an Kreuzungen in zufällige Richtungen, nie aufs Ziel
 // Computer nimmt den, der dem Ziel am nächsten ist und noch nicht steuerlos ist
@@ -4973,7 +5133,7 @@ async function rollPopup(p){
   $('#pmsg').innerHTML=`${VEH[p.veh]} <b>${esc(p.name)}</b>, du bist dran!${hint}${n>1?`<br>🎰 Diesmal drehen <b>${n} Walzen</b>, die Ergebnisse werden addiert.`:''}${machineHTML(n)}`;
   askSeq++; const pb=$('#pbtns'); pb.innerHTML=''; pb.classList.remove('col','grid','menu'); $('#popup').classList.remove('wide'); $('#popup').classList.add('slotpop'); $('#popup').hidden=false; fitMachine();
   const g=gameId;
-  if(NET.on&&p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
+  if(p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
   await netArm(p,()=>new Promise(res=>{ $('#arm').onclick=()=>res(0); if(p.cpu) setTimeout(()=>{ if(g===gameId) res(0); },800*SPEED); }));
   if(g!==gameId) throw 'abort';
   $('#arm').disabled=true; $('#slothint').textContent=''; SND.play('lever');
@@ -5424,7 +5584,7 @@ async function orderRoll(p,again){
   $('#pmsg').innerHTML=`🏁 <b>Wer fängt an?</b><br>${VEH[p.veh]} <b>${esc(p.name)}</b>, dreh am Automaten!${again?'<br><small>Gleichstand – ihr dreht nochmal.</small>':'<br><small>Die höchste Zahl fängt an.</small>'}${machineHTML(1)}`;
   askSeq++; const pb=$('#pbtns'); pb.innerHTML=''; pb.classList.remove('col','grid','menu'); $('#popup').classList.remove('wide'); $('#popup').classList.add('slotpop'); $('#popup').hidden=false; fitMachine();
   const g=gameId;
-  if(NET.on&&p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
+  if(p.cpu) $('#arm').disabled=true;   // Version 141: online zieht der Computer selbst, sonst ginge es nur auf einem Gerät schneller weiter
   await netArm(p,()=>new Promise(res=>{ $('#arm').onclick=()=>res(0); if(p.cpu) setTimeout(()=>{ if(g===gameId) res(0); },800*SPEED); }));
   if(g!==gameId) throw 'abort';
   $('#arm').disabled=true; $('#slothint').textContent=''; SND.play('lever');
@@ -5480,6 +5640,11 @@ async function playStage(){
         if(act&&act.kind==='zucker') await sugar(p,act.target);
         if(act&&act.kind==='naegel') await dropNails(p,act.at);
         if(act&&act.kind==='steuerlos') await steerOff(p,act.target);
+        if(act&&act.kind==='tausch') await swapPlaces(p,act.target);
+        if(act&&act.kind==='dieb') await pickPocket(p,act.target);
+        if(act&&act.kind==='abschlepp') await towAway(p,act.target);
+        if(act&&act.kind==='wind') await slipstream(p);
+        if(act&&act.kind==='streik') await rentStrike(p,act.target);
         let d;
         if(act&&act.kind==='steps'){
           d=act.n; roll.d=d; roll.rem=d; roll.parts=[d]; setDie('👣'+d,false);
@@ -5487,6 +5652,9 @@ async function playStage(){
         } else {
           d=await rollPopup(p);
           say(`${p.name} würfelt ${d}.`);
+          if(act&&act.kind==='turbo'){ d*=2; roll.d=d; roll.rem=d; setDie('🚀'+d,false); showStatus(); SND.play('whoosh');
+            say(`🚀 Turbo! ${p.name} fährt doppelt so weit: ${d} Felder.`);
+            await askPop(`🚀 <b>Turbo!</b><br>${VEH[p.veh]} ${esc(p.name)} hat ${d/2} gewürfelt – das zählt doppelt.<br>Du fährst <b>${d} Felder</b>!`,['Vollgas!']); }
         }
         const wild=p.steer>0; if(wild){ p.steer=0; render(); say(`🌀 ${p.name} fährt steuerlos!`); SND.play('spin');
           await askPop(`🌀 <b>Steuerlos!</b><br>${VEH[p.veh]} ${esc(p.name)}, dein Lenkrad dreht durch: An jeder Kreuzung fährt dein Auto in eine zufällige Richtung – aber nie direkt aufs Ziel.`,['Oh nein!'],{delay:1400}); }
@@ -5553,12 +5721,16 @@ async function settleDebt(p){
   if(p.money<0) p.money=0;
 }
 async function rentEnd(){
-  const gains=players.map(p=>({p,rent:rentOf(p)*(p.doubleRent?2:1),dbl:!!p.doubleRent})).filter(g=>g.rent>0);
-  players.forEach(p=>{ p.doubleRent=false; });
-  if(!gains.length){ render(); return; }
+  // ✋ Mietstreik (Version 165): wer bestreikt wird, bekommt diesmal keine Miete
+  const struck=players.filter(p=>p.strike&&rentOf(p)>0);
+  const gains=players.map(p=>({p,rent:p.strike?0:rentOf(p)*(p.doubleRent?2:1),dbl:!!p.doubleRent})).filter(g=>g.rent>0);
+  players.forEach(p=>{ p.doubleRent=false; p.strike=0; });
+  if(!gains.length&&!struck.length){ render(); return; }
+  if(!gains.length){ render(); SND.play('loss'); say('✋ Mietstreik: '+struck.map(p=>p.name).join(', ')+' bekommt keine Miete.');
+    await askPop(`🏠 <b>Ende der Runde – Mieteinnahmen</b><br>${struck.map(p=>`${VEH[p.veh]} ${esc(p.name)}: <b>0 €</b> ✋ Mietstreik!`).join('<br>')}`,['Weiter'],{auto:3000}); return; }
   gains.forEach(g=>{ pay(g.p,g.rent); stat(g.p,'miete',g.rent); }); render(); SND.play('coins',Math.min(5,gains.length+1));
   say('Miete: '+gains.map(g=>g.p.name+' +'+g.rent+' €'+(g.dbl?' (doppelt)':'')).join(', '));
-  await askPop(`🏠 <b>Ende der Runde – Mieteinnahmen</b><br>${gains.map(g=>`${VEH[g.p.veh]} ${esc(g.p.name)}: <b>+${g.rent} €</b>${g.dbl?' (doppelte Miete)':''}`).join('<br>')}`,['Weiter'],{auto:3000});
+  await askPop(`🏠 <b>Ende der Runde – Mieteinnahmen</b><br>${gains.map(g=>`${VEH[g.p.veh]} ${esc(g.p.name)}: <b>+${g.rent} €</b>${g.dbl?' (doppelte Miete)':''}`).concat(struck.map(p=>`${VEH[p.veh]} ${esc(p.name)}: <b>0 €</b> ✋ Mietstreik!`)).join('<br>')}`,['Weiter'],{auto:3000});
 }
 function standings(){
   const ranked=players.map(p=>({p,total:p.money+valueOf(p)})).sort((a,b)=>b.total-a.total);
@@ -5574,7 +5746,7 @@ async function playGame(resume){
       if(STAGE>=STAGES) break;
       render();
       const w=players.find(p=>p.finished);
-      await askPop(`🏁 <b>Etappe ${STAGE} von ${STAGES} geschafft!</b><br>${w?esc(w.name)+' gewinnt die Etappe.':''}${standings()}`,['Nächste Etappe'],{delay:3000});
+      await askPop(`🏁 <b>Etappe ${STAGE} von ${STAGES} geschafft!</b><br>${w?esc(w.name)+' gewinnt die Etappe.':''}${standings()}`,['Nächste Etappe'],{auto:6000});
       STAGE++;
     }
     results();
@@ -5688,10 +5860,10 @@ function startGame(list,opt){
   // 🌐 Version 136: im Onlinespiel kommen Startwert, Etappen und Fahrerliste vom Gastgeber
   RSEED=opt.seed!=null?opt.seed>>>0:(Math.random()*4294967296)>>>0;
   netReset(opt);
-  STAGES=opt.stages||parseInt($('#stages').value)||3;
+  STAGES=opt.stages||parseInt($('#stages').value)||5;
   SANTA=list.some(l=>String(l.name||'').trim().replace(/\s+/g,' ').toLowerCase()==='santa claus');
   SEASON0=0; setWinter(winterAt(0));   // ❄️ immer Sommer – außer mit Santa Claus (Version 157: keine Auswahl im Startmenü mehr)
-  players=list.map(l=>({name:l.name,slot:l.slot,veh:l.veh??l.slot,cpu:l.cpu,cid:l.cid||null,pos:START,hd:0,trail:[],money:300,objs:[],inv:[startItem()],doubleRent:false,slotsNext:1,skip:0,steer:0,finished:false,rank:0,again:false,st:newStats()}));
+  players=list.map(l=>({name:l.name,slot:l.slot,veh:l.veh??l.slot,cpu:l.cpu,cid:l.cid||null,pos:START,hd:0,trail:[],money:300,objs:[],inv:[startItem()],doubleRent:false,slotsNext:1,skip:0,steer:0,strike:0,finished:false,rank:0,again:false,st:newStats()}));
   routeBtns(); renderScore();   // Version 153: gleich die neuen Spielerkarten zeigen, nicht die alten bis zur Zielauslosung
   $('#goal').textContent='🎯 Ziel wird ausgelost …';
   $('#setup').hidden=true; $('#game').hidden=false;
